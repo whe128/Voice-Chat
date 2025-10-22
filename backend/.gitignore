@@ -1,0 +1,12 @@
+# Debug
+obj/
+
+# bin
+bin/
+
+# VS / .NET
+bin/
+obj/
+*.user
+*.suo
+*.vs/
