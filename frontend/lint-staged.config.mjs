@@ -7,9 +7,9 @@ const buildEslintCommand = (filenames) =>
 
 const config = {
   '**/*': ['prettier --check --ignore-unknown'],
-  '**/*.{ts, tsx, js, jsx, mjs, css}': ['stylelint'],
-  '**/*.{ts, tsx, js, jsx, mjs}': [buildEslintCommand],
-  '**/*.{ts, tsx}': [() => 'tsc --noEmit'],
+  '**/*.{ts,tsx,js,jsx,mjs,css}': ['stylelint'],
+  '**/*.{ts,tsx,js,jsx,mjs}': [buildEslintCommand],
+  '**/*.{ts,tsx}': [() => 'tsc --noEmit'],
 };
 
 export default config;
