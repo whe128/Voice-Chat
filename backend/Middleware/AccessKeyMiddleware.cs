@@ -14,7 +14,7 @@ public class AccessKeyMiddleware
     public async Task InvokeAsync(HttpContext context)
     {
 
-        if (!context.Request.Headers.TryGetValue("AccessKey", out var extractedAccessKey) ||
+        if (!context.Request.Headers.TryGetValue("accessKey", out var extractedAccessKey) ||
             extractedAccessKey != _accessKey)
         {
             context.Abort();

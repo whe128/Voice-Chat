@@ -1,5 +1,6 @@
 using Backend.Middleware;
 using DotNetEnv;
+using Backend.WebSocketCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -21,6 +22,9 @@ app.Use(async (context, next) =>
     var middleware = new AccessKeyMiddleware(accessKey, next);
     await middleware.InvokeAsync(context);
 });
+app.UseWebSockets();
+// Map the WebSocket endpoint
+app.Map("/ws", AppWebSocketManager.HandleConnectionAsync);
 
 app.MapControllers();
 
