@@ -51,7 +51,10 @@ public static class WebSocketRequestHandler
                 case "textChat":
                     var text = root.GetProperty("content").GetString();
                     Console.WriteLine($"💬 Text chat from {userId}: {text}");
-                    await AppWebSocketManager.SendToUserAsync(userId, $"Echo: {text}");
+
+                    string? reply = await GeminiChat.Instance.SendMessageAsync(text ?? "");
+
+                    await AppWebSocketManager.SendToUserAsync(userId, $"{reply}");
                     break;
 
                 case "textTranslation":
@@ -89,6 +92,10 @@ public static class WebSocketRequestHandler
                     // Send to speech-to-text service
                     string? transcript = await SpeechToText.Instance.TranscribeAsync(audioBytes, voiceChatRequest.AudioType);
                     Console.WriteLine($"📝 Transcript for {userId}: {transcript}");
+
+                    string? reply = await GeminiChat.Instance.SendMessageAsync(transcript ?? "");
+
+                    await AppWebSocketManager.SendToUserAsync(userId, $"{reply}");
 
                     //TODO: send the transcript to AI chat service and get response
 
