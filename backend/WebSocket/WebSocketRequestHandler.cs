@@ -2,6 +2,8 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 using System.Collections.Concurrent;
+using Backend.Services;
+using Backend.Models;
 
 namespace Backend.WebSocketCore;
 /// <summary>
@@ -11,8 +13,8 @@ namespace Backend.WebSocketCore;
 public static class WebSocketRequestHandler
 {
     // Tracks which users are in voice chat mode waiting for binary data
-    private static readonly ConcurrentDictionary<string, bool> _voiceChatMode =
-        new ConcurrentDictionary<string, bool>();
+    private static readonly ConcurrentDictionary<string, VoiceChatRequest> _voiceChatMode =
+        new ConcurrentDictionary<string, VoiceChatRequest>();
 
     /// <summary>
     /// Process a WebSocket message from a specific user.
@@ -41,7 +43,9 @@ public static class WebSocketRequestHandler
             {
                 case "voiceChat":
                     Console.WriteLine($"🎤 {userId} initiated voice chat. Expecting binary next.");
-                    _voiceChatMode[userId] = true;
+                    string audioType = root.GetProperty("audioType").GetString() ?? "mp3";
+
+                    _voiceChatMode[userId] = new VoiceChatRequest(audioType);
                     break;
 
                 case "textChat":
@@ -73,10 +77,26 @@ public static class WebSocketRequestHandler
         else if (messageType == WebSocketMessageType.Binary)
         {
             // Handle binary data (e.g., voice chat)
-            if (_voiceChatMode.TryGetValue(userId, out var inVoiceMode) && inVoiceMode)
+            if (_voiceChatMode.TryGetValue(userId, out var voiceChatRequest) && voiceChatRequest != null)
             {
                 Console.WriteLine($"🔊 Received voice data from {userId}: {count} bytes");
-                // TODO: process voice data
+
+                byte[] audioBytes = new byte[count];
+                Array.Copy(message, audioBytes, count);
+
+                try
+                {
+                    // Send to speech-to-text service
+                    string? transcript = await SpeechToText.Instance.TranscribeAsync(audioBytes, voiceChatRequest.AudioType);
+                    Console.WriteLine($"📝 Transcript for {userId}: {transcript}");
+
+                    //TODO: send the transcript to AI chat service and get response
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"⚠️ Error transcribing audio for {userId}: {ex.Message}");
+                }
 
                 // After processing, reset voice chat mode
                 ResetVoiceChatMode(userId);

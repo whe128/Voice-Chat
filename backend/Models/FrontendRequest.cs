@@ -8,4 +8,5 @@ public record User(
 );
 public record LoginRequest(string Username, string Password);
 
+public record VoiceChatRequest(string AudioType);
 
