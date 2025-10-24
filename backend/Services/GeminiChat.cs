@@ -75,7 +75,7 @@ public class GeminiChat
 
         var jsonResponse = await response.Content.ReadAsStringAsync();
 
-        // 解析返回 JSON
+        // parse JSON
         using var doc = JsonDocument.Parse(jsonResponse);
         var root = doc.RootElement;
 

@@ -10,8 +10,7 @@ public class AppWebSocketManager
 {
     // Stores all active WebSocket connections.
     // Key: userId (string), Value: WebSocket instance
-    private static readonly ConcurrentDictionary<string, WebSocket> _userSockets =
-        new ConcurrentDictionary<string, WebSocket>();
+    private static readonly ConcurrentDictionary<string, WebSocket> _userSockets = new();
 
     /// <summary>
     /// Handles an incoming WebSocket connection request.
@@ -97,10 +96,9 @@ public class AppWebSocketManager
     /// <summary>
     /// Sends a message to a specific user if their WebSocket is open.
     /// </summary>
-    public static async Task SendToUserAsync(string userId, string message)
+    public static async Task SendToUserAsync(WebSocket socket, string message)
     {
-        if (_userSockets.TryGetValue(userId, out var socket) &&
-            socket.State == WebSocketState.Open)
+        if (socket != null && socket.State == WebSocketState.Open)
         {
             var bytes = Encoding.UTF8.GetBytes(message);
             await socket.SendAsync(

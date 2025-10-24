@@ -10,3 +10,6 @@ public record LoginRequest(string Username, string Password);
 
 public record VoiceChatRequest(string AudioType);
 
+
+public record ChatReply(string ReplyMessage, string GrammarError);
+public record TranslationReply(string TranslationText);

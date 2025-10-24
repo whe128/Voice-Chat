@@ -52,9 +52,12 @@ public static class WebSocketRequestHandler
                     var text = root.GetProperty("content").GetString();
                     Console.WriteLine($"💬 Text chat from {userId}: {text}");
 
+                    //TODO: formate the ask message and send to AI chat service
+
+                    
                     string? reply = await GeminiChat.Instance.SendMessageAsync(text ?? "");
 
-                    await AppWebSocketManager.SendToUserAsync(userId, $"{reply}");
+                    await AppWebSocketManager.SendToUserAsync(socket, $"{reply}");
                     break;
 
                 case "textTranslation":
@@ -62,14 +65,14 @@ public static class WebSocketRequestHandler
                     Console.WriteLine($"🌐 Translation request from {userId}: {textToTranslate}");
                     // TODO: caall translation service
 
-                    await AppWebSocketManager.SendToUserAsync(userId, $"Translated: {textToTranslate}");
+                    await AppWebSocketManager.SendToUserAsync(socket, $"Translated: {textToTranslate}");
                     break;
 
                 case "textHistory":
                     Console.WriteLine($"📜 History request from {userId}");
                     // TODO: fetch history data
 
-                    await AppWebSocketManager.SendToUserAsync(userId, "History data...");
+                    await AppWebSocketManager.SendToUserAsync(socket, "History data...");
                     break;
 
                 default:
@@ -95,7 +98,7 @@ public static class WebSocketRequestHandler
 
                     string? reply = await GeminiChat.Instance.SendMessageAsync(transcript ?? "");
 
-                    await AppWebSocketManager.SendToUserAsync(userId, $"{reply}");
+                    await AppWebSocketManager.SendToUserAsync(socket, $"{reply}");
 
                     //TODO: send the transcript to AI chat service and get response
 
