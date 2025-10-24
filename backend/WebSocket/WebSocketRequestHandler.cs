@@ -74,8 +74,7 @@ public static class WebSocketRequestHandler
 
                         string? translationPrompt = Formatter.TranslationFormatPrompt(textToTranslate ?? "", language);
                         string? translatedText = await GeminiChat.Instance.SendMessageAsync(translationPrompt ?? "");
-
-                        await AppWebSocketManager.SendTextToUserAsync(socket, $"Translated: {translatedText}");
+                        await AppWebSocketManager.SendTextToUserAsync(socket, translatedText ?? "");
                         break;
                     // fetch chat history
                     case "textHistory":
