@@ -5,8 +5,13 @@ public static class Formatter
     /// <summary>
     /// Format a user message into a structured prompt for the AI.
     /// </summary>
-    public static string ChatFormatPrompt(string userMessage, int maxWords = 50, string language = "English")
+    public static string ChatFormatPrompt(string userMessage, string language = "English", int maxWords = 50)
     {
+        if (userMessage.Trim() == "")
+        {
+            return userMessage;
+        }
+
         return $@"
 You are an AI assistant.
 Analyze the user's message and return a JSON object with two fields:
@@ -16,7 +21,10 @@ Analyze the user's message and return a JSON object with two fields:
 
 User message: ""{userMessage}""
 
-return Expected JSON format:
+Instructions:
+- Only return a valid JSON object.
+- Do NOT include Markdown (```), code blocks, or any commentary.
+- Example JSON format:
 {{
     ""replyMessage"": ""<your reply here>"",
     ""grammarError"": ""<grammar issue or empty>""
@@ -27,7 +35,7 @@ return Expected JSON format:
 
     public static string TranslationFormatPrompt(string userMessage, string targetLanguage = "English")
     {
-        if (targetLanguage.ToLower() == "english")
+        if (targetLanguage.ToLower() == "english" || userMessage.Trim() == "")
         {
             // no need to translate
             return userMessage;
@@ -40,12 +48,14 @@ Do not add extra commentary.
 
 Original text: ""{userMessage}""
 
-return Expected JSON format:
+Instructions:
+- Only return a valid JSON object.
+- Do NOT include Markdown (```), code blocks, or any commentary.
+- Example JSON format:
 {{
     ""translatedText"": ""<your translation here>""
 }}
 ";
-
     }
 
 }

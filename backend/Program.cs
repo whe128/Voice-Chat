@@ -3,11 +3,12 @@ using DotNetEnv;
 using Backend.WebSocketCore;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllers();
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
-});
+builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+            options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        });
 var app = builder.Build();
 
 Env.Load();

@@ -1,9 +1,5 @@
-using System;
-using System.Net.Http;
-using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Backend.Services;
 
@@ -50,7 +46,11 @@ public class GeminiChat
     /// <returns>Generated text from Gemini.</returns>
     public async Task<string?> SendMessageAsync(string prompt)
     {
-        // 构建请求 JSON
+        if (prompt.Trim() == "")
+        {
+            return "{\"replyMessage\": \"Hello, how can I assist you today?\", \"grammarError\": \"\"}";
+        }
+        // construct request body
         var requestBody = new
         {
             contents = new[]

@@ -50,7 +50,7 @@ public class AppWebSocketManager
     /// </summary>
     private static async Task ReceiveLoopAsync(string userId, WebSocket socket)
     {
-        var buffer = new byte[1024 * 2048];
+        var buffer = new byte[1024 * 1024 * 10];
 
         try
         {
@@ -96,7 +96,7 @@ public class AppWebSocketManager
     /// <summary>
     /// Sends a message to a specific user if their WebSocket is open.
     /// </summary>
-    public static async Task SendToUserAsync(WebSocket socket, string message)
+    public static async Task SendTextToUserAsync(WebSocket socket, string message)
     {
         if (socket != null && socket.State == WebSocketState.Open)
         {
@@ -105,6 +105,22 @@ public class AppWebSocketManager
                 new ArraySegment<byte>(bytes),
                 WebSocketMessageType.Text,
                 true,
+                CancellationToken.None
+            );
+        }
+    }
+
+    /// <summary>
+    /// Sends binary data (e.g., audio) to a WebSocket client.
+    /// </summary>
+    public static async Task SendBinaryToUserAsync(WebSocket socket, byte[] data)
+    {
+        if (socket != null && socket.State == WebSocketState.Open)
+        {
+            await socket.SendAsync(
+                new ArraySegment<byte>(data),
+                WebSocketMessageType.Binary,
+                true, // true as the final fragment
                 CancellationToken.None
             );
         }

@@ -1,7 +1,6 @@
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
+using Backend.Models;
 
 namespace Backend.Services;
 
@@ -46,20 +45,47 @@ public class TextToAudio
     /// </summary>
     public async Task<byte[]?> GetAudioAsync(
         string text,
-        string style = "af_bella",
-        double speed = 1.0,
-        string contentType = "mp3")
+        ReplyAudioOption replyAudioOption)
     {
-        var requestBody = new
+        // construct request body
+        object? requestBody;
+        var audioType = replyAudioOption.Type.ToLower();
+
+        if (audioType == "mp3")
         {
-            text,
-            style,
-            speed,
-            mp3 = contentType.ToLower() == "mp3"
-        };
+            requestBody = new
+            {
+                text,
+                style = replyAudioOption.Style,
+                speed = replyAudioOption.Speed,
+                mp3 = true
+            };
+        }
+        else if (replyAudioOption.Type.ToLower() == "wav")
+        {
+            requestBody = new
+            {
+                text,
+                style = replyAudioOption.Style,
+                speed = replyAudioOption.Speed,
+                wav = true
+            };
+        }
+        else
+        {
+            requestBody = new
+            {
+                text,
+                style = replyAudioOption.Style,
+                speed = replyAudioOption.Speed,
+            };
+        }
+
 
         string jsonRequest = JsonSerializer.Serialize(requestBody);
         using var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+        Console.WriteLine(jsonRequest);
 
         using var response = await _httpClient.PostAsync(_apiUrl, content);
         if (!response.IsSuccessStatusCode)
