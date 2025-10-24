@@ -10,19 +10,19 @@ namespace Backend.Services;
 public class GeminiChat
 {
     private static GeminiChat? _instance;
-    private static readonly object _lock = new object();
-
+    private static readonly object _lock = new();
     private readonly HttpClient _httpClient;
-    private readonly string _apiKey;
+    private readonly string _apiUrl;
 
     private GeminiChat()
     {
-        _apiKey = Environment.GetEnvironmentVariable("GEMIMNI_API_KEY")
-            ?? throw new Exception("Gemini API key not found in environment variables.");
+        _apiUrl = Environment.GetEnvironmentVariable("GEMIMNI_API_URL")
+            ?? throw new Exception("Gemini API URL not found in environment variables.");
 
+        string apiKey = Environment.GetEnvironmentVariable("GEMIMNI_API_KEY")
+            ?? throw new Exception("Gemini API key not found in environment variables.");
         _httpClient = new HttpClient();
-        _httpClient.DefaultRequestHeaders.Add("x-goog-api-key", _apiKey);
-        _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+        _httpClient.DefaultRequestHeaders.Add("x-goog-api-key", apiKey);
     }
 
     public static GeminiChat Instance
@@ -50,8 +50,6 @@ public class GeminiChat
     /// <returns>Generated text from Gemini.</returns>
     public async Task<string?> SendMessageAsync(string prompt)
     {
-        var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
-
         // 构建请求 JSON
         var requestBody = new
         {
@@ -70,7 +68,7 @@ public class GeminiChat
         var jsonRequest = JsonSerializer.Serialize(requestBody);
         using var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
-        var response = await _httpClient.PostAsync(url, content);
+        var response = await _httpClient.PostAsync(_apiUrl, content);
         response.EnsureSuccessStatusCode();
 
         var jsonResponse = await response.Content.ReadAsStringAsync();
