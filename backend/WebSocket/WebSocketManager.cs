@@ -37,6 +37,15 @@ public class AppWebSocketManager
         // Accept the WebSocket connection
         var webSocket = await context.WebSockets.AcceptWebSocketAsync();
 
+
+        if (_userSockets.TryGetValue(userId, out var existingSocket))
+        {
+            // Close existing connection if user reconnects
+            if (existingSocket.State == WebSocketState.Open)
+            {
+                await existingSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Replaced by new connection", CancellationToken.None);
+            }
+        }
         // Store the connection for later use
         _userSockets[userId] = webSocket;
 
