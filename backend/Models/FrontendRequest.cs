@@ -4,9 +4,20 @@ public record User(
     string Id,
     string? Name,
     string Email,
-    string? Image
+    string? Image,
+    DateTime? LastLogin
 );
-public record LoginRequest(string Username, string Password);
+
+public record ChatMessage(
+    string Message,
+    DateTime Time,
+    bool IsSendOut
+);
+public record LoginRequest(string Email, string Password);
+
+public record RegistRequest(string Email, string Password);
+
+public record DeleteAccountRequest(string Email);
 
 public record ReplyAudioOption(string Style = "af_bella",
                                 string Type = "mp3",

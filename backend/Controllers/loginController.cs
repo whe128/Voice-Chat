@@ -1,23 +1,31 @@
-namespace Backend.Controllers;
-
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
+using Backend.Services;
+
+namespace Backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class LoginController : ControllerBase
 {
     [HttpPost]     //.../api/login
-    public IActionResult Login([FromBody] LoginRequest request)
+    public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
     {
-        if (request.Username == "test" && request.Password == "test")
+        Console.WriteLine($"Login attempt for user: {request.Email}");
+        var userResult = await UserData.AuthenticateUserAsync(request.Email, request.Password);
+        if (userResult == null)
         {
-            return Ok(new User(
-                Id: "1",
-                Name: "Test User",
-                Email: "test@test",
-                Image: "https://example.com/image.png"));
+            return StatusCode(401, "Invalid username or password.");
         }
-        return Ok(null);
+
+
+        User user = new(
+            userResult.Id.ToString(),
+            userResult.Email!,
+            userResult.Email!,
+            userResult.AvatarUrl,
+            userResult.LastLogin
+        );
+        return Ok(user);
     }
 }

@@ -81,11 +81,8 @@ public class TextToAudio
             };
         }
 
-
         string jsonRequest = JsonSerializer.Serialize(requestBody);
         using var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-
-        Console.WriteLine(jsonRequest);
 
         using var response = await _httpClient.PostAsync(_apiUrl, content);
         if (!response.IsSuccessStatusCode)
