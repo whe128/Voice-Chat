@@ -1,6 +1,8 @@
 using System.Collections.Concurrent;
 using System.Net.WebSockets;
 using System.Text;
+using Backend.Services;
+
 namespace Backend.WebSocketCore;
 
 /// <summary>
@@ -24,8 +26,8 @@ public class AppWebSocketManager
             return;
         }
 
-        // Extract user ID from query string (e.g., ws://localhost:5000/ws?userId=123)
-        var userId = context.Request.Query["userId"].ToString();
+        // Extract user ID from query string (e.g., ws://localhost:5000/ws)
+        var userId = context.Request.Headers["userId"].ToString();
         if (string.IsNullOrEmpty(userId))
         {
             context.Response.StatusCode = 401; // Unauthorized
@@ -80,6 +82,10 @@ public class AppWebSocketManager
         }
         finally
         {
+            // On exit, mark user as offline
+            UserData.LogoutUserAsync(Guid.Parse(userId)).Wait();
+
+
             // Clean up user connection when disconnected
             _userSockets.TryRemove(userId, out _);
 

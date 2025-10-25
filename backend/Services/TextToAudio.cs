@@ -48,40 +48,16 @@ public class TextToAudio
         ReplyAudioOption replyAudioOption)
     {
         // construct request body
-        object? requestBody;
         var audioType = replyAudioOption.Type.ToLower();
 
-        if (audioType == "mp3")
+        object requestBody = audioType switch
         {
-            requestBody = new
-            {
-                text,
-                style = replyAudioOption.Style,
-                speed = replyAudioOption.Speed,
-                mp3 = true
-            };
-        }
-        else if (replyAudioOption.Type.ToLower() == "wav")
-        {
-            requestBody = new
-            {
-                text,
-                style = replyAudioOption.Style,
-                speed = replyAudioOption.Speed,
-                wav = true
-            };
-        }
-        else
-        {
-            requestBody = new
-            {
-                text,
-                style = replyAudioOption.Style,
-                speed = replyAudioOption.Speed,
-            };
-        }
+            "mp3" => new { text, replyAudioOption.Style, replyAudioOption.Speed, mp3 = true },
+            "wav" => new { text, replyAudioOption.Style, replyAudioOption.Speed, wav = true },
+            _ => new { text, replyAudioOption.Style, replyAudioOption.Speed },
+        };
 
-        string jsonRequest = JsonSerializer.Serialize(requestBody);
+        string jsonRequest = JsonSerializer.Serialize(requestBody, JsonSettings.CamelCase);
         using var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
         using var response = await _httpClient.PostAsync(_apiUrl, content);
@@ -92,5 +68,20 @@ public class TextToAudio
         }
 
         return await response.Content.ReadAsByteArrayAsync();
+    }
+
+    /// <summary>
+    /// Sends text string to VoxTTS for voice sample generation.
+    /// </summary>
+    public async Task<byte[]?> GetVoiceSampleAsync(
+        ReplyAudioOption replyAudioOption)
+    {
+
+        string sampleText = """
+            Hi there! This is a voice sample test of the voice system,
+            you can choose different voice types.";
+            """;
+
+        return await GetAudioAsync(sampleText, replyAudioOption);
     }
 }

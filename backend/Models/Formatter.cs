@@ -5,7 +5,7 @@ public static class Formatter
     /// <summary>
     /// Format a user message into a structured prompt for the AI.
     /// </summary>
-    public static string ChatFormatPrompt(string userMessage, string language = "English", int maxWords = 50)
+    public static string ChatFormatPrompt(string userMessage, string language = "English", int maxWords = 30)
     {
         if (userMessage.Trim() == "")
         {
@@ -15,8 +15,11 @@ public static class Formatter
         return $@"
 You are an AI assistant.
 Analyze the user's message and return a JSON object with two fields:
-1. replyMessage: an English response to the user's message (no more than {maxWords} words)
-2. grammarError: a string describing any grammar mistakes found in the user's message in {language}.
+1. replyMessage: an English response to the user's message (no more than {maxWords} words),
+    - not includes error corrections.
+2. grammarError: a string describing errors found in the user's message in {language}.
+    - consider grammar, words spelling errors.
+    - not consider uppercase, lowercase, punctuation errors.
     - If no grammar mistakes, return an empty string """".
 
 User message: ""{userMessage}""
@@ -25,10 +28,7 @@ Instructions:
 - Only return a valid JSON object.
 - Do NOT include Markdown (```), code blocks, or any commentary.
 - Example JSON format:
-{{
-    ""replyMessage"": ""<your reply here>"",
-    ""grammarError"": ""<grammar issue or empty>""
-}}
+{{""replyMessage"":""<your reply here>"",""grammarError"":""<grammar issue or empty>""}}
 ";
     }
 
@@ -52,9 +52,7 @@ Instructions:
 - Only return a valid JSON object.
 - Do NOT include Markdown (```), code blocks, or any commentary.
 - Example JSON format:
-{{
-    ""translatedText"": ""<your translation here>""
-}}
+{{""translatedText"":""<your translation here>""}}
 ";
     }
 
