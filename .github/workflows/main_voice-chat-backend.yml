@@ -7,6 +7,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "backend/**"
   workflow_dispatch:
 
 jobs:
@@ -14,8 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read #This is required for actions/checkout
-    run:
-      working-directory: ./backend
+    defaults:
+      run:
+        working-directory: ./backend
     steps:
       - uses: actions/checkout@v4
 
