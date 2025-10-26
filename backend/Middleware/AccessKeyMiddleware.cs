@@ -32,6 +32,7 @@ User-Agent: {userAgent}
 Headers: {string.Join(", ", context.Request.Headers.Select(h => $"{h.Key}={h.Value.ToString().Substring(0, Math.Min(h.Value.ToString().Length, 50))}"))}
 RemoteIP: {context.Connection.RemoteIpAddress}
 ============================";
+        Console.WriteLine(logMessage);
 
         // var path = context.Request.Path.Value;
         // if (path == "/")
