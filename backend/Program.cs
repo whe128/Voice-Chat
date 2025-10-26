@@ -18,6 +18,7 @@ if (!string.IsNullOrEmpty(port))
 {
     app.Urls.Add($"http://*:{port}");
 }
+Console.WriteLine($"Application started. Listening on ports: {string.Join(", ", app.Urls)}");
 
 var accessKey = Environment.GetEnvironmentVariable("FRONTEND_ACCESS_KEY")
 ?? throw new Exception("Access key not found in environment variables.");
