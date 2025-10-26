@@ -36,66 +36,62 @@ public static class WebSocketRequestHandler
                 return;
             }
 
-            var type = typeElem.GetString();
+            var type = typeElem.GetString() ?? "";
             var language = root.GetProperty("language").GetString() ?? "English";
+            var text = root.GetProperty("content").GetString() ?? "";
 
-            if (type == "voiceChat" || type == "textChat" || type == "voiceSample")
+            var replyAudioJson = root.GetProperty("replyAudio").GetRawText() ?? "";
+
+            ReplyAudioOption? replyAudioOption = string.IsNullOrEmpty(replyAudioJson.Trim())
+                            ? JsonSerializer.Deserialize<ReplyAudioOption>(replyAudioJson, JsonSettings.CamelCase)
+                                                : null;
+
+            switch (type)
             {
+                case "voiceChat":
+                    Console.WriteLine($"🎤 {userId} initiated voice chat. Expecting binary next.");
+                    string audioType = root.GetProperty("audioType").GetString() ?? "mp3";
 
-                var replyAudioJson = root.GetProperty("replyAudio").GetRawText();
-                ReplyAudioOption replyAudioOption = JsonSerializer.Deserialize<ReplyAudioOption>(
-                                                replyAudioJson ?? "",
-                                                JsonSettings.CamelCase)
-                                                ?? new ReplyAudioOption();
+                    _voiceChatMode[userId] = new VoiceChatRequest(audioType, language, replyAudioOption ?? new ReplyAudioOption());
+                    break;
 
-                switch (type)
-                {
-                    case "voiceChat":
-                        Console.WriteLine($"🎤 {userId} initiated voice chat. Expecting binary next.");
-                        string audioType = root.GetProperty("audioType").GetString() ?? "mp3";
+                case "textChat":
+                    await HandleChatResponseAsync(Guid.Parse(userId), socket, text ?? "", language, replyAudioOption ?? new ReplyAudioOption());
+                    break;
 
-                        _voiceChatMode[userId] = new VoiceChatRequest(audioType, language, replyAudioOption);
-                        break;
+                // reply with the voice sample
+                case "voiceSample":
+                    Console.WriteLine($"🔊 Voice sample request from {userId}");
+                    await HandleVoiceSamplAsync(socket, replyAudioOption ?? new ReplyAudioOption());
+                    break;
 
-                    case "textChat":
-                        var text = root.GetProperty("content").GetString();
-                        await HandleChatResponseAsync(Guid.Parse(userId), socket, text ?? "", language, replyAudioOption);
-                        break;
+                case "textRead":
+                    if (text.Trim() != "")
+                        await HandleTextReadAsync(socket, text, replyAudioOption ?? new ReplyAudioOption());
+                    break;
 
-                    // reply with the voice sample
-                    case "voiceSample":
-                        Console.WriteLine($"🔊 Voice sample request from {userId}");
-                        await HandleVoiceSamplAsync(socket, replyAudioOption);
-                        break;
-                }
-            }
-            else
-            {
-                switch (type)
-                {
-                    // reply with translation
-                    case "textTranslation":
-                        var textToTranslate = root.GetProperty("content").GetString();
-                        Console.WriteLine($"Translation request from {userId}: {textToTranslate} to-> {language}");
+                // reply with translation
+                case "textTranslation":
+                    var textToTranslate = root.GetProperty("content").GetString();
+                    Console.WriteLine($"Translation request from {userId}: {textToTranslate} to-> {language}");
 
-                        string? translationPrompt = Formatter.TranslationFormatPrompt(textToTranslate ?? "", language);
-                        string? translatedText = await GeminiChat.Instance.SendMessageAsync(translationPrompt ?? "");
+                    string? translationPrompt = Formatter.TranslationFormatPrompt(textToTranslate ?? "", language);
+                    string? translatedText = await GeminiChat.Instance.SendMessageAsync(translationPrompt ?? "");
 
-                        await AppWebSocketManager.SendTextToUserAsync(socket, translatedText ?? "");
-                        break;
-                    // fetch chat history
-                    case "textHistory":
-                        Console.WriteLine($"📜 History request from {userId}");
-                        var chatHistory = await ChatHistoryData.GetUserHistoryAsync(Guid.Parse(userId));
-                        var historyJson = JsonSerializer.Serialize(chatHistory, JsonSettings.CamelCase);
+                    await AppWebSocketManager.SendTextToUserAsync(socket, translatedText ?? "");
+                    break;
+                // fetch chat history
+                case "textHistory":
+                    Console.WriteLine($"📜 History request from {userId}");
+                    var chatHistory = await ChatHistoryData.GetUserHistoryAsync(Guid.Parse(userId));
+                    var historyJson = JsonSerializer.Serialize(chatHistory, JsonSettings.CamelCase);
 
-                        await AppWebSocketManager.SendTextToUserAsync(socket, historyJson);
-                        break;
+                    await AppWebSocketManager.SendTextToUserAsync(socket, historyJson);
+                    break;
 
-                    default:
-                        Console.WriteLine($"⚠️ Unknown request type from {userId}: {type}");
-                        break;
-                }
+                default:
+                    Console.WriteLine($"⚠️ Unknown request type from {userId}: {type}");
+                    break;
             }
         }
         else if (messageType == WebSocketMessageType.Binary)
@@ -160,7 +156,18 @@ public static class WebSocketRequestHandler
             await AppWebSocketManager.SendBinaryToUserAsync(socket, replyAudio);
         }
     }
+    public static async Task HandleTextReadAsync(WebSocket socket,
+                                                    string text,
+                                                    ReplyAudioOption replyAudioOption)
+    {
+        byte[]? replyAudio = await TextToAudio.Instance.GetAudioAsync(text, replyAudioOption);
 
+        // send auodio reply back to user
+        if (replyAudio != null && replyAudio.Length > 0)
+        {
+            await AppWebSocketManager.SendBinaryToUserAsync(socket, replyAudio);
+        }
+    }
     public static async Task HandleVoiceSamplAsync(WebSocket socket,
                                                     ReplyAudioOption replyAudioOption)
     {
