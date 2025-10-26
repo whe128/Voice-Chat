@@ -28,12 +28,6 @@ app.Map("/ws", AppWebSocketManager.HandleConnectionAsync);
 
 app.MapControllers();
 
-
-// Health check endpoint for Azure
-app.MapGet("/", () => Results.Ok("Running"));
-
-Console.WriteLine($"Application started. Listening on ports: {string.Join(", ", app.Urls)}");
-
 var port = Environment.GetEnvironmentVariable("PORT");
 if (!string.IsNullOrEmpty(port))
 {
