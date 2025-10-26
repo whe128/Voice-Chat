@@ -15,16 +15,10 @@ public class AccessKeyMiddleware
     {
         var path = context.Request.Path.Value ?? "";
 
-        if (path == "/")
-        {
-            await _next(context);
-            return;
-        }
-
         if (!context.Request.Headers.TryGetValue("accessKey", out var extractedAccessKey) ||
             extractedAccessKey != _accessKey)
         {
-            context.Abort();
+            context.Response.StatusCode = 404;
             return;
         }
         await _next(context);
