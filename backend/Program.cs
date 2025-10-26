@@ -13,6 +13,11 @@ var app = builder.Build();
 
 Env.Load();
 
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(port))
+{
+    app.Urls.Add($"http://*:{port}");
+}
 
 var accessKey = Environment.GetEnvironmentVariable("FRONTEND_ACCESS_KEY")
 ?? throw new Exception("Access key not found in environment variables.");
