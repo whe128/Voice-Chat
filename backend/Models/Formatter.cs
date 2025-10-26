@@ -20,7 +20,7 @@ Analyze the user's message and return a JSON object with two fields:
 2. grammarError: a string describing errors found in the user's message in {language}.
     - consider grammar, words spelling errors.
     - not consider uppercase, lowercase, punctuation errors.
-    - If no grammar mistakes, return an empty string """".
+    - If no grammar mistakes or user's message is not English, return an empty string """".
 
 User message: ""{userMessage}""
 
