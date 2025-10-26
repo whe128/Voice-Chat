@@ -15,7 +15,7 @@ public class AccessKeyMiddleware
     {
 
         var path = context.Request.Path.Value;
-        if (context.Request.Headers["X-WEBSITE-WARMUP"].Count != 0 && path == "/")
+        if (path == "/")
         {
             await _next(context);
             return;
