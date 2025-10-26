@@ -13,13 +13,6 @@ var app = builder.Build();
 
 Env.Load();
 
-var port = Environment.GetEnvironmentVariable("PORT");
-if (!string.IsNullOrEmpty(port))
-{
-    app.Urls.Add($"http://*:{port}");
-}
-Console.WriteLine($"Application started. Listening on ports: {string.Join(", ", app.Urls)}");
-
 var accessKey = Environment.GetEnvironmentVariable("FRONTEND_ACCESS_KEY")
 ?? throw new Exception("Access key not found in environment variables.");
 
@@ -35,4 +28,18 @@ app.Map("/ws", AppWebSocketManager.HandleConnectionAsync);
 
 app.MapControllers();
 
-app.Run();
+
+// Health check endpoint for Azure
+app.MapGet("/", () => Results.Ok("Running"));
+
+Console.WriteLine($"Application started. Listening on ports: {string.Join(", ", app.Urls)}");
+
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(port))
+{
+    app.Run($"http://0.0.0.0:{port}");
+}
+else
+{
+    app.Run();
+}
