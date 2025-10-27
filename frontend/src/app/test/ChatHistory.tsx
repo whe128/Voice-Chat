@@ -15,7 +15,7 @@ const MessageBox: FC<{
     return (
       <div className="flex items-center">
         <TranslateButton />
-        <div className="w-fit max-w-56 h-fit h-content text-sm p-1 break-words border rounded-xl bg-yellow-200/80">
+        <div className="w-fit max-w-56 h-fit h-content shadow text-sm p-1 break-words rounded-xl bg-yellow-200/80">
           {message}
         </div>
         <button className="text-xl p-1 select-none hover:cursor-pointer active:scale-85 transition-transform duration-200">
@@ -29,7 +29,7 @@ const MessageBox: FC<{
         <button className="text-xl p-1 select-none hover:cursor-pointer active:scale-85 transition-transform duration-200 rotate-180">
           🔉
         </button>
-        <div className="w-fit max-w-56 h-fit h-content text-sm p-1 break-words border rounded-xl bg-green-300/40">
+        <div className="w-fit max-w-56 h-fit h-content shadow text-sm p-1 break-words rounded-xl bg-green-300/40">
           {message}
         </div>
         <TranslateButton />
@@ -82,7 +82,7 @@ const ChatHistory: FC<{
       Chat History
     </div>
     <div className="flex select-none justify-end text-xs text-gray-500 pr-2">
-      🔉 speak, 🔁 translation,
+      🔉speak 🔁translation
     </div>
 
     <div className="flex flex-col gap-1 overflow-y-auto scrollbar-custom">

@@ -51,21 +51,21 @@ const AiChat: FC = () => (
         />
 
         <div className="flex flex-col ml-4 gap-1">
-          <button className="bg-blue-400 px-4 py-2 select-none font-bold rounded-lg hover:bg-blue-600 active:scale-95 transition duration-300">
+          <button className="bg-blue-400 shadow px-4 py-2 select-none font-bold rounded-lg hover:bg-blue-600 cursor-pointer active:scale-95 transition duration-300">
             Send➣
           </button>
 
-          <button className="bg-yellow-400 px-4 py-2 select-none font-bold rounded-lg hover:bg-yellow-600 active:scale-95 transition duration-300">
+          <button className="bg-yellow-400 shadow px-4 py-2 select-none font-bold rounded-lg hover:bg-yellow-600 cursor-pointer active:scale-95 transition duration-300">
             Chat🎙
           </button>
         </div>
       </div>
       <div className="flex gap-10">
-        <button className="bg-green-400 text-white select-none px-4 py-2 rounded-lg hover:bg-green-600 active:scale-95 transition duration-300">
+        <button className="bg-green-400 shadow text-white select-none px-4 py-2 rounded-lg hover:bg-green-600 cursor-pointer active:scale-95 transition duration-300">
           Translate
         </button>
 
-        <button className="bg-red-400 text-white select-none px-4 py-2 rounded-lg hover:bg-red-600 active:scale-95 transition duration-300">
+        <button className="bg-red-400 shadow text-white select-none px-4 py-2 rounded-lg hover:bg-red-600 cursor-pointer active:scale-95 transition duration-300">
           Read🔊
         </button>
       </div>
