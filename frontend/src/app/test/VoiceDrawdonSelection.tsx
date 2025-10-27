@@ -70,7 +70,7 @@ const VoiceDropdown: FC<{
             }
             speakHandle(voice);
           }}
-          className="text-xl p-1 hover:cursor-pointer active:scale-85 transition-transform duration-200"
+          className="text-xl p-1 select-none hover:cursor-pointer active:scale-85 transition-transform duration-200"
         >
           🔉
         </button>

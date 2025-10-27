@@ -15,7 +15,7 @@ const AiChat: FC = () => (
             className="w-60 p-2 text-sm rounded border border-gray-300 resize-none focus:outline-none"
           />
 
-          <button className="text-4xl p-1 hover:cursor-pointer active:scale-85 transition-transform duration-200">
+          <button className="text-4xl p-1 select-none hover:cursor-pointer active:scale-85 transition-transform duration-200">
             🔉
           </button>
         </div>
@@ -25,7 +25,7 @@ const AiChat: FC = () => (
         <div className="text-sm font-bold">Ask message</div>
 
         <div className="flex items-center">
-          <button className="text-4xl p-1 rotate-180 hover:cursor-pointer active:scale-85 transition-transform duration-200">
+          <button className="text-4xl p-1 select-none rotate-180 hover:cursor-pointer active:scale-85 transition-transform duration-200">
             🔉
           </button>
 
@@ -45,24 +45,27 @@ const AiChat: FC = () => (
       <div className="flex text-sm b-2 font-bold">Input Here</div>
 
       <div className="flex">
-        <textarea className="w-full text-sm p-2 rounded border border-gray-300 resize-none" />
+        <textarea
+          defaultValue="hello"
+          className="w-full text-sm p-2 rounded border border-gray-300 resize-none"
+        />
 
         <div className="flex flex-col ml-4 gap-1">
-          <button className="bg-blue-400 px-4 py-2 font-bold rounded-lg hover:bg-blue-600 active:scale-95 transition duration-300">
+          <button className="bg-blue-400 px-4 py-2 select-none font-bold rounded-lg hover:bg-blue-600 active:scale-95 transition duration-300">
             Send➣
           </button>
 
-          <button className="bg-yellow-400 px-4 py-2 font-bold rounded-lg hover:bg-yellow-600 active:scale-95 transition duration-300">
+          <button className="bg-yellow-400 px-4 py-2 select-none font-bold rounded-lg hover:bg-yellow-600 active:scale-95 transition duration-300">
             Chat🎙
           </button>
         </div>
       </div>
       <div className="flex gap-10">
-        <button className="bg-green-400 text-white px-4 py-2 rounded-lg hover:bg-green-600 active:scale-95 transition duration-300">
+        <button className="bg-green-400 text-white select-none px-4 py-2 rounded-lg hover:bg-green-600 active:scale-95 transition duration-300">
           Translate
         </button>
 
-        <button className="bg-red-400 text-white px-4 py-2 rounded-lg hover:bg-red-600 active:scale-95 transition duration-300">
+        <button className="bg-red-400 text-white select-none px-4 py-2 rounded-lg hover:bg-red-600 active:scale-95 transition duration-300">
           Read🔊
         </button>
       </div>
