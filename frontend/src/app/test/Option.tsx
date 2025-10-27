@@ -18,7 +18,7 @@ interface OptionProps {
 }
 
 const Option: FC = () => (
-  <div className="flex flex-col p-4 gap-1 w-100 h-148 bg-pink-100/50 rounded-2xl">
+  <div className="flex flex-col p-4 gap-1 w-100 h-148 bg-pink-100/50 rounded-2xl overflow-y-auto">
     <div className="flex justify-center text-blue-800 text-3xl font-bold">
       Option
     </div>
@@ -26,8 +26,16 @@ const Option: FC = () => (
     <div className="flex flex-col gap-4 ">
       <VoiceSelection />
       <LanguageSelection />
-      <ToggleSelection attribute="audio-type" options={audioTypes} />
-      <ToggleSelection attribute="reply-audio-type" options={audioTypes} />
+      <ToggleSelection
+        label="Audio Type"
+        attribute="audio-type"
+        options={audioTypes}
+      />
+      <ToggleSelection
+        label="Reply Audio Type"
+        attribute="reply-audio-type"
+        options={audioTypes}
+      />
     </div>
   </div>
 );

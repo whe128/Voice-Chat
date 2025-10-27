@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
 const AiChat: FC = () => (
-  <div className="flex flex-col p-4 gap-4 w-100 h-148 bg-pink-100/50 rounded-2xl">
+  <div className="flex flex-col p-4 gap-4 w-100 h-148 bg-pink-100/50 rounded-2xl overflow-y-auto">
     <div className="flex justify-center text-blue-800 text-3xl font-bold">
       AI Chat
     </div>
@@ -41,7 +41,7 @@ const AiChat: FC = () => (
         />
       </div>
     </div>
-    <div className="flex flex-col gap-1">
+    <div className="flex h-full flex-col gap-1">
       <div className="flex text-sm b-2 font-bold">Input Here</div>
 
       <div className="flex">
@@ -50,19 +50,19 @@ const AiChat: FC = () => (
           className="w-full text-sm p-2 rounded border border-gray-300 resize-none"
         />
 
-        <div className="flex flex-col ml-4 gap-1">
-          <button className="bg-blue-400 shadow px-4 py-2 select-none font-bold rounded-lg hover:bg-blue-600 cursor-pointer active:scale-95 transition duration-300">
+        <div className="flex flex-col ml-3 w-30 gap-1">
+          <button className="bg-blue-400 shadow py-2 select-none font-bold rounded-lg hover:bg-blue-600 cursor-pointer active:scale-95 transition duration-300">
             Send➣
           </button>
 
-          <button className="bg-yellow-400 shadow px-4 py-2 select-none font-bold rounded-lg hover:bg-yellow-600 cursor-pointer active:scale-95 transition duration-300">
+          <button className="bg-yellow-400 shadow py-2 px select-none font-bold rounded-lg hover:bg-yellow-600 cursor-pointer active:scale-95 transition duration-300">
             Chat🎙
           </button>
         </div>
       </div>
-      <div className="flex gap-10">
+      <div className="flex gap-7">
         <button className="bg-green-400 shadow text-white select-none px-4 py-2 rounded-lg hover:bg-green-600 cursor-pointer active:scale-95 transition duration-300">
-          Translate
+          Translate🔁
         </button>
 
         <button className="bg-red-400 shadow text-white select-none px-4 py-2 rounded-lg hover:bg-red-600 cursor-pointer active:scale-95 transition duration-300">

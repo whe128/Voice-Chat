@@ -77,7 +77,7 @@ const chatMessages: ChatMessage[] = [
 const ChatHistory: FC<{
   messages?: ChatMessage[];
 }> = ({ messages = chatMessages }) => (
-  <div className="flex flex-col py-4 pl-4 px-2 gap-1 w-100 h-148 bg-pink-100/50 rounded-2xl">
+  <div className="flex flex-col py-4 pl-4 px-2 gap-1 w-100 h-148 bg-pink-100/50 rounded-2xl overflow-y-auto">
     <div className="flex justify-center text-blue-800 text-3xl font-bold">
       Chat History
     </div>
