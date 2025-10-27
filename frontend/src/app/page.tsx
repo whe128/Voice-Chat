@@ -10,11 +10,7 @@ const Home: FC = () => {
     router.push('/test');
   }, [router]);
 
-  return (
-    <div>
-      <h1>Welcome to Home</h1>
-    </div>
-  );
+  return null;
 };
 
 export default Home;

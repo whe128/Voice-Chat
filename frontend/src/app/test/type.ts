@@ -1,4 +1,4 @@
-const audioTypes: string[] = ['wav', 'mp3'] as const;
+const audioTypes: string[] = ['mp3', 'wav'] as const;
 
 const sysLanguages: string[] = [
   'English',
