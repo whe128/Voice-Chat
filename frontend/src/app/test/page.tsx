@@ -1,3 +1,5 @@
+'use client';
+
 import { FC } from 'react';
 import AiChat from './AiChat';
 import ChatHistory from './ChatHistory';
