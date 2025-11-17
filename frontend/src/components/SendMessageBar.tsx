@@ -51,8 +51,13 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
 
   const { isRecording, start, stop } = useRecorder();
 
-  const { addMessage, updateGrammarCheck, updateMessageText, deleteMessage } =
-    useChatHistory(ws);
+  const {
+    addMessage,
+    updateGrammarCheck,
+    updateMessageText,
+    updateHasGrammarCheck,
+    deleteMessage,
+  } = useChatHistory(ws);
 
   // disable button
   const translationDisable = isTranslating || isAudioProcessing;
@@ -176,6 +181,8 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
     } else {
       // remove the placeholder reply message
       deleteMessage(`reply${messageId}`);
+      // close the grammar check for the sent message
+      updateHasGrammarCheck(messageId, false);
       alert('Failed to get reply from server. Please try again.');
     }
   };

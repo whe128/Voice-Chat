@@ -116,10 +116,11 @@ const useTextRead = (
     if (responseError) {
       logger.log(`apiTextRead returned error: ${responseError}`);
       setError(responseError);
+      setIsLoading(false);
+      setIsProcessing(false);
     } else if (resReplyAudio) {
       logger.log('apiTextRead returned audio blob');
       setReadAudio(resReplyAudio);
-
       setError('');
     }
 

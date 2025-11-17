@@ -19,6 +19,7 @@ const useChatHistory = (
   addMessage: (msg: ChatMessage, targetId?: string) => void;
   updateGrammarCheck: (id: string, grammarError: string) => void;
   updateMessageText: (id: string, text: string) => void;
+  updateHasGrammarCheck: (id: string, hasGrammarCheck: boolean) => void;
   deleteMessage: (id: string) => void;
 } => {
   const queryClient = useQueryClient();
@@ -92,6 +93,21 @@ const useChatHistory = (
     );
   };
 
+  const updateHasGrammarCheck = (
+    id: string,
+    hasGrammarCheck: boolean,
+  ): void => {
+    queryClient.setQueryData<ChatMessage[]>(['chatHistory'], (oldData = []) =>
+      oldData.map((msg) => {
+        if (msg.id === id && msg.hasGrammarCheck !== hasGrammarCheck) {
+          return { ...msg, hasGrammarCheck };
+        }
+
+        return msg;
+      }),
+    );
+  };
+
   const deleteMessage = (id: string): void => {
     queryClient.setQueryData<ChatMessage[]>(['chatHistory'], (oldData = []) =>
       oldData.filter((msg) => msg.id !== id),
@@ -106,6 +122,7 @@ const useChatHistory = (
     addMessage,
     updateGrammarCheck,
     updateMessageText,
+    updateHasGrammarCheck,
     deleteMessage,
   };
 };
