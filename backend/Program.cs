@@ -15,7 +15,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowVercel", policy =>
     {
         policy.WithOrigins(
-                "https://voice-chat-pearl.vercel.app/",
+                "https://voice-chat-pearl.vercel.app",
                 "http://localhost:3000"
               )
               .AllowAnyMethod()
