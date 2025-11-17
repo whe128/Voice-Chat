@@ -1,7 +1,7 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState, type FC, ReactNode } from 'react';
+import { useState, type FC, ReactNode, Suspense } from 'react';
 import { SessionProvider } from 'next-auth/react';
 import WebSocketProvider from '@/provider/WebSocketProvider';
 import AuthGuardProvider from '@/provider/AuthGuardProvider';
@@ -27,15 +27,17 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
   );
 
   return (
-    <SessionProvider>
-      <QueryClientProvider client={queryClient}>
-        <AuthGuardProvider>
-          <UseInfoProvider>
-            <WebSocketProvider>{children}</WebSocketProvider>
-          </UseInfoProvider>
-        </AuthGuardProvider>
-      </QueryClientProvider>
-    </SessionProvider>
+    <Suspense fallback={null}>
+      <SessionProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthGuardProvider>
+            <UseInfoProvider>
+              <WebSocketProvider>{children}</WebSocketProvider>
+            </UseInfoProvider>
+          </AuthGuardProvider>
+        </QueryClientProvider>
+      </SessionProvider>
+    </Suspense>
   );
 };
 
