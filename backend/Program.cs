@@ -15,18 +15,14 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowVercel", policy =>
     {
         policy.WithOrigins(
-                "https://your-app.vercel.app",              //  production domain
-                "https://your-app-*.vercel.app",            //  vercel preview deployments
-                "http://localhost:3000",
-                "http://192.168.66.121:3000"             // localhost for development
+                "https://voice-chat-pearl.vercel.app/",
+                "http://localhost:3000"
               )
               .AllowAnyMethod()
               .AllowAnyHeader()
               .WithHeaders("Content-Type", "accessKey")
               .SetIsOriginAllowedToAllowWildcardSubdomains();
     });
-
-
 });
 
 
@@ -40,8 +36,7 @@ var accessKey = Environment.GetEnvironmentVariable("FRONTEND_ACCESS_KEY")
 
 app.UseRouting();
 
-// app.UseCors("AllowVercel");
-app.UseCors("AllowAll");
+app.UseCors("AllowVercel");
 
 
 app.UseWebSockets();
