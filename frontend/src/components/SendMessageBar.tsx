@@ -122,7 +122,7 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
     const reply = await handleVoiceChat(voiceBlob);
     // add send message to chat history
     if (!reply) {
-      alert('Failed to get reply from server. Please try again.');
+      alert('Failed to get reply from server. Please chat again.');
 
       return;
     }
@@ -183,7 +183,7 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
       deleteMessage(`reply${messageId}`);
       // close the grammar check for the sent message
       updateHasGrammarCheck(messageId, false);
-      alert('Failed to get reply from server. Please try again.');
+      alert('Failed to get reply from server. Please send again.');
     }
   };
 
