@@ -1,30 +1,33 @@
 using Backend.Models;
-using Backend.Util;
+using Backend.Utils;
 
 namespace Backend.Services;
 
 public class UserData
 {
     //authenticate user by email and password
-    public static async Task<UserTable?> AuthenticateUserAsync(string email, string password)
+    public static async Task<(UserTable? user, string? error)> AuthenticateUserAsync(string email, string password)
     {
+        // avoid empty inputs
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            return (null, "Email or password is empty");
+
         var user = await GetUserByEmailAsync(email);
         if (user == null)
-            return null; // user not found
+            return (null, "User not found, please register first");
         if (string.IsNullOrEmpty(user.PasswordHash))
-            return null;
+            return (null, "unknow error occurred, please contact support");
         if (!PasswordHelper.VerifyPassword(password, user.PasswordHash))
-            return null; // password incorrect
+            return (null, "password is incorrect");
 
-        user.LastLogin = DateTime.UtcNow;
-        user.IsOnline = true;
-
-        await UpdateUserAsync(user);
-
-        return user;
+        return (user, null);
     }
 
-    public static async Task<UserTable> RegisterUserAsync(string email, string password, string? avatarUrl = "")
+    public static async Task<UserTable> RegisterUserAsync(string email,
+                                                        string password,
+                                                        string provider,
+                                                        string? avatarUrl
+                                                        )
     {
         var existingUser = await GetUserByEmailAsync(email);
         if (existingUser != null)
@@ -32,19 +35,61 @@ public class UserData
             throw new Exception("User with this email already exists.");
         }
 
-        return await InsertUserAsync(email, password, avatarUrl);
+        return await InsertUserAsync(email, password, provider, avatarUrl);
     }
 
-
-    public static async Task LogoutUserAsync(Guid userId)
+    public static async Task UpdateLastLoginUserAsync(Guid userId)
     {
         var client = await DataService.GetClientAsync();
         var update = await client
                     .From<UserTable>()
                     .Where(u => u.Id == userId)
-                    .Set(x => x.IsOnline!, false)
+                    .Set(x => x.LastLogin!, DateTime.UtcNow)
                     .Update();
     }
+
+
+    public static async Task UpdateIsOnlineUserAsync(Guid userId, bool isOnline)
+    {
+        var client = await DataService.GetClientAsync();
+        var update = await client
+                    .From<UserTable>()
+                    .Where(u => u.Id == userId)
+                    .Set(x => x.IsOnline!, isOnline)
+                    .Update();
+    }
+
+    public static async Task UpdateAvatarUserAsync(Guid userId, string avatarUrl)
+    {
+        var client = await DataService.GetClientAsync();
+        var update = await client
+                    .From<UserTable>()
+                    .Where(u => u.Id == userId)
+                    .Set(x => x.AvatarUrl!, avatarUrl)
+                    .Update();
+    }
+
+
+    public static async Task UpdateLanguageUserAsync(Guid userId, string language)
+    {
+        var client = await DataService.GetClientAsync();
+        var update = await client
+                    .From<UserTable>()
+                    .Where(u => u.Id == userId)
+                    .Set(x => x.Language!, language)
+                    .Update();
+    }
+
+    public static async Task UpdateVoiceUserAsync(Guid userId, string voice)
+    {
+        var client = await DataService.GetClientAsync();
+        var update = await client
+                    .From<UserTable>()
+                    .Where(u => u.Id == userId)
+                    .Set(x => x.Voice!, voice)
+                    .Update();
+    }
+
 
     // get user by email
     public static async Task<UserTable?> GetUserByEmailAsync(string email)
@@ -57,12 +102,12 @@ public class UserData
         return result.Models.Count > 0 ? result.Models[0] : null;
     }
 
-    // get user by email
-    public static async Task<UserTable?> GetUserByUuidAsync(Guid uuid)
+    // get user by uuid
+    public static async Task<UserTable?> GetUserByidAsync(Guid id)
     {
         var client = await DataService.GetClientAsync();
         var result = await client.From<UserTable>()
-            .Where(u => u.Id == uuid)
+            .Where(u => u.Id == id)
             .Get();
 
         return result.Models.Count > 0 ? result.Models[0] : null;
@@ -70,7 +115,7 @@ public class UserData
 
 
     // insert a new user into the database
-    public static async Task<UserTable> InsertUserAsync(string email, string password, string? avatarUrl = "")
+    public static async Task<UserTable> InsertUserAsync(string email, string password, string provider, string? avatarUrl)
     {
         try
         {
@@ -78,8 +123,9 @@ public class UserData
             var newUser = new UserTable
             {
                 Email = email,
-                PasswordHash = PasswordHelper.HashPassword(password),
-                AvatarUrl = avatarUrl ?? string.Empty,
+                PasswordHash = string.IsNullOrEmpty(password) ? "" : PasswordHelper.HashPassword(password),
+                AvatarUrl = avatarUrl,
+                Provider = provider
             };
 
             var result = await client.From<UserTable>().Insert(newUser);

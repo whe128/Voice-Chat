@@ -5,7 +5,7 @@ public static class Formatter
     /// <summary>
     /// Format a user message into a structured prompt for the AI.
     /// </summary>
-    public static string ChatFormatPrompt(string userMessage, string language = "English", int maxWords = 30)
+    public static string ChatFormatPrompt(string userMessage, string language = "English", int maxWords = 25)
     {
         if (userMessage.Trim() == "")
         {
@@ -13,7 +13,6 @@ public static class Formatter
         }
 
         return $@"
-You are an AI assistant.
 Analyze the user's message and return a JSON object with two fields:
 1. replyMessage: an English response to the user's message (no more than {maxWords} words),
     - not includes error corrections.
@@ -35,13 +34,12 @@ Instructions:
 
     public static string TranslationFormatPrompt(string userMessage, string targetLanguage = "English")
     {
-        if (targetLanguage.ToLower() == "english" || userMessage.Trim() == "")
+        if (targetLanguage.Equals("english", StringComparison.CurrentCultureIgnoreCase) || userMessage.Trim() == "")
         {
             // no need to translate
             return userMessage;
         }
         return $@"
-You are an AI translation assistant.
 Please translate the original text into {targetLanguage}.
 Keep the meaning accurate, natural, and fluent.
 Do not add extra commentary.

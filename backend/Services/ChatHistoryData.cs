@@ -42,8 +42,8 @@ public class ChatHistoryData
             return [
                 ..result.Models.Select(
                     chat => new ChatMessage(
+                    chat.Id.ToString(),
                     chat.Message ?? "",
-                    chat.Time,
                     chat.IsSendOut
                 )
             )];

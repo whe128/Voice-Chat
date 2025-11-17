@@ -1,8 +1,11 @@
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Backend.Services;
+using Backend.Utils;
 
 namespace Backend.Controllers;
+
+public record RegistRequest(string Email, string Password, string Provider);
 
 [ApiController]
 [Route("api/[controller]")]
@@ -11,12 +14,13 @@ public class RegisterController : ControllerBase
     [HttpPost] // .../api/register
     public async Task<IActionResult> RegisterAsync([FromBody] RegistRequest request)
     {
-        Console.WriteLine($"Register attempt for user: {request.Email}");
+        //Line($"Register attempt for user: {request.Email}");
 
         // check if username already exists
         var existingUser = await UserData.GetUserByEmailAsync(request.Email);
         if (existingUser != null)
         {
+            Logger.Log($"Registration failed: username {request.Email} already exists.");
             return StatusCode(409, "Username already exists."); // 409 Conflict
         }
 
@@ -25,11 +29,13 @@ public class RegisterController : ControllerBase
         var newUserResult = await UserData.RegisterUserAsync(
             request.Email,
             request.Password,
-            ""
+            request.Provider,
+            null
             );
 
         if (newUserResult == null)
         {
+            Logger.Log("Registration failed: unable to create user.");
             return StatusCode(500, "Failed to create user.");
         }
 
@@ -39,7 +45,10 @@ public class RegisterController : ControllerBase
             newUserResult.Email!,
             newUserResult.Email!,
             newUserResult.AvatarUrl,
-            newUserResult.LastLogin
+            newUserResult.LastLogin,
+            newUserResult.Provider,
+            newUserResult.Language,
+            newUserResult.Voice
         );
 
         return Ok(user);

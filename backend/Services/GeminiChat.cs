@@ -29,10 +29,7 @@ public class GeminiChat
             {
                 lock (_lock)
                 {
-                    if (_instance == null)
-                    {
-                        _instance = new GeminiChat();
-                    }
+                    _instance ??= new GeminiChat();
                 }
             }
             return _instance;

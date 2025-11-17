@@ -28,10 +28,7 @@ public class SpeechToText
             {
                 lock (_lock)
                 {
-                    if (_instance == null)
-                    {
-                        _instance = new SpeechToText();
-                    }
+                    _instance ??= new SpeechToText();
                 }
             }
             return _instance;

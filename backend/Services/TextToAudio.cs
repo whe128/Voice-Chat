@@ -30,10 +30,7 @@ public class TextToAudio
             {
                 lock (_lock)
                 {
-                    if (_instance == null)
-                    {
-                        _instance = new TextToAudio();
-                    }
+                    _instance ??= new TextToAudio();
                 }
             }
             return _instance;
@@ -63,7 +60,6 @@ public class TextToAudio
         using var response = await _httpClient.PostAsync(_apiUrl, content);
         if (!response.IsSuccessStatusCode)
         {
-            Console.WriteLine($"⚠️ Text-to-Audio API error: {response.StatusCode}");
             return null;
         }
 

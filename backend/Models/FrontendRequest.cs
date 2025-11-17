@@ -5,19 +5,18 @@ public record User(
     string? Name,
     string Email,
     string? Image,
-    DateTime? LastLogin
+    DateTime? LastLogin,
+    string Provider,
+    string? Language,
+    string? Voice
 );
 
 public record ChatMessage(
-    string Message,
-    DateTime Time,
+    string Id,
+    string Text,
     bool IsSendOut
 );
-public record LoginRequest(string Email, string Password);
 
-public record RegistRequest(string Email, string Password);
-
-public record DeleteAccountRequest(string Email);
 
 public record ReplyAudioOption(string Style = "af_bella",
                                 string Type = "mp3",
@@ -26,6 +25,7 @@ public record VoiceChatRequest(string AudioType,
                                 string Language,
                                 ReplyAudioOption ReplyAudioOption);
 
+public record ChatAnalyze(string ReplyMessage, string GrammarError);
 
-public record ChatReply(string ReplyMessage, string GrammarError);
+public record ChatReply(string OriginalText, string ReplyMessage, string GrammarError);
 public record TranslationReply(string TranslatedText);

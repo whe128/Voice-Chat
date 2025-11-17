@@ -1,5 +1,4 @@
 using Supabase;
-using Supabase.Postgrest.Models;
 
 namespace Backend.Services;
 

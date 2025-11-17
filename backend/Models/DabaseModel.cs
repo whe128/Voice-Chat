@@ -16,7 +16,7 @@ public class UserTable : BaseModel
     public string PasswordHash { get; set; } = string.Empty;
 
     [Column("avatar_url")]
-    public string AvatarUrl { get; set; } = string.Empty;
+    public string? AvatarUrl { get; set; } = null;
 
     [Column("created_at")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -26,6 +26,15 @@ public class UserTable : BaseModel
 
     [Column("is_online")]
     public bool IsOnline { get; set; } = false;
+
+    [Column("provider")]
+    public string Provider { get; set; } = string.Empty;
+
+    [Column("language")]
+    public string? Language { get; set; } = null;
+
+    [Column("voice")]
+    public string? Voice { get; set; } = null;
 }
 
 

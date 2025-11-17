@@ -2,6 +2,7 @@ import { FC, ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import Providers from '@/provider/Providers';
 
 interface Props {
   children: ReactNode;
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
 const RootLayout: FC<Props> = ({ children }) => (
   <html lang="en">
     <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-      {children}
+      <Providers>{children}</Providers>
     </body>
   </html>
 );

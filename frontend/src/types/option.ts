@@ -1,0 +1,92 @@
+const audioTypes: string[] = ['mp3', 'wav'] as const;
+
+const sysLanguages: string[] = [
+  'Chinese',
+  'Japanese',
+  'Korean',
+  'Vietnamese',
+  'Thai',
+  'Russian',
+  'Hindi',
+  'Arabic',
+  'Malay',
+  'Italian',
+  'Portuguese',
+  'Greek',
+  'Brazilian',
+  'Swahili',
+  'French',
+  'Spanish',
+  'Dutch',
+  'Turkish',
+  'Swedish',
+  'German',
+  'English',
+] as const;
+
+const sysVoices: string[] = [
+  'af_bella',
+  'if_sara',
+  'am_echo',
+  'am_onyx',
+  'jf_tebukuro',
+  'jm_kumo',
+  'pf_dora',
+  'am_michael',
+  'jf_gongitsune',
+  'pm_santa',
+  'em_santa',
+  'zm_yunjian',
+  'zm_yunxia',
+  'zm_yunyang',
+  'bf_emma',
+  'zm_yunxi',
+  'im_nicola',
+  'af_heart',
+  'zf_xiaoni',
+  'af_nicole',
+  'bm_george',
+  'am_puck',
+  'ef_dora',
+  'pm_alex',
+  'zf_xiaobei',
+  'af_sarah',
+  'am_adam',
+  'zf_xiaoyi',
+  'am_santa',
+  'bm_lewis',
+  'zf_xiaoxiao',
+  'am_liam',
+  'hm_omega',
+  'hf_beta',
+  'af_nova',
+  'am_fenrir',
+  'bf_lily',
+  'af_sky',
+  'hm_psi',
+  'af_river',
+  'em_alex',
+  'jf_alpha',
+  'af_aoede',
+  'af_kore',
+  'bf_alice',
+  'hf_alpha',
+  'af_alloy',
+  'am_eric',
+  'bm_fable',
+  'ff_siwis',
+  'jf_nezumi',
+  'bm_daniel',
+  'af_jessica',
+  'bf_isabella',
+] as const;
+
+type AudioType = (typeof audioTypes)[number];
+
+type LanguageType = (typeof sysLanguages)[number];
+
+type VoiceType = (typeof sysVoices)[number];
+
+export type { AudioType, LanguageType, VoiceType };
+
+export { audioTypes, sysLanguages, sysVoices };

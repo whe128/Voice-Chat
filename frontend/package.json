@@ -17,13 +17,17 @@
     "lint:fix": "stylelint \"src/**/*.{ts, tsx, js, jsx, mjs, css}\" --fix && next typegen && eslint --fix",
     "type-check": "next typegen && tsc --noEmit",
     "commitlint": "commintlint --edit",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "mydev": "next dev -H 0.0.0.0 -p 3000"
   },
   "dependencies": {
+    "@tanstack/react-query-devtools": "^5.90.2",
     "next": "15.5.6",
+    "next-auth": "^4.24.13",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "styled-components": "^6.1.19"
+    "styled-components": "^6.1.19",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.1",
