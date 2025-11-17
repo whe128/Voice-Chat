@@ -86,6 +86,7 @@ export const useRecorder = (): {
             alert(
               `Recording is too short. Please record at least ${MIN_RECORD_DURATION / 1000} seconds.`,
             );
+            setIsRecording(false);
 
             return resolve(null);
           }
