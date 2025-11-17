@@ -13,9 +13,7 @@ import {
 } from '@/utils/logger';
 import { apiGetOpenLogServer, apiSetOpenLogServer } from '@/api/OpenLogServer';
 
-const SetOpenLog: FC<{
-  handleOpenSetting: () => void;
-}> = ({ handleOpenSetting }) => {
+const SetOpenLog: FC = () => {
   const searchParams = useSearchParams();
   const query = searchParams.toString();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -113,7 +111,6 @@ const SetOpenLog: FC<{
 
       <Link
         href={query ? `/?${query}` : `/`}
-        onClick={handleOpenSetting}
         className="absolute px-3 rounded-md hover:bg-gray-50 top-8 left-6 text-xl w-fit select-none hover:cursor-pointer active:scale-95 origin-left transition-transform duration-200"
       >
         🏠Home

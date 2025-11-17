@@ -47,7 +47,12 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
     handleTextRead,
   } = useTextRead(ws, showMessage);
 
-  const { isChatting, handleTextChat, handleVoiceChat } = useChat(ws);
+  const {
+    error: chatError,
+    isChatting,
+    handleTextChat,
+    handleVoiceChat,
+  } = useChat(ws);
 
   const { isRecording, start, stop } = useRecorder();
 
@@ -122,7 +127,7 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
     const reply = await handleVoiceChat(voiceBlob);
     // add send message to chat history
     if (!reply) {
-      alert('Failed to get reply from server. Please chat again.');
+      alert(chatError || 'Failed to get reply from server. Please send again.');
 
       return;
     }
@@ -183,7 +188,8 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
       deleteMessage(`reply${messageId}`);
       // close the grammar check for the sent message
       updateHasGrammarCheck(messageId, false);
-      alert('Failed to get reply from server. Please send again.');
+
+      alert(chatError || 'Failed to get reply from server. Please send again.');
     }
   };
 
@@ -199,7 +205,9 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
               ? (): void => void handleStopRecording()
               : (): void => void start()
           }
-          className="flex justify-center items-center w-4/5 h-9 select-none ml-5 focus:outline-none background bg-gray-50 rounded-xl border border-gray-300 text-gray-400 hover:cursor-pointer active:scale-95 transition-transform duration-200"
+          disabled={isChatting}
+          className={`flex justify-center items-center w-4/5 h-9 select-none ml-5 focus:outline-none background bg-gray-50 rounded-xl border border-gray-300 text-gray-400 transition-transform duration-200
+            ${isChatting ? 'pointer-events-none opacity-50' : 'hover:cursor-pointer active:scale-95'}`}
         >
           {isChatting ? (
             <div className="flex items-center gap-4">
@@ -224,9 +232,9 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
                 className="block select-none mx-auto"
                 src="/microphone.png"
                 alt="Logo"
-                width={15}
-                height={15}
-                style={{ width: 'auto', height: 'auto' }}
+                width={25}
+                height={25}
+                style={{ width: 'auto', height: '25px' }}
                 priority
               />
               Tap to record

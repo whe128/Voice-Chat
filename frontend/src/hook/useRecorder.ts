@@ -72,6 +72,8 @@ export const useRecorder = (): {
         const stream = streamRef.current;
 
         if (!recorder) {
+          setIsRecording(false);
+
           return resolve(null);
         }
 

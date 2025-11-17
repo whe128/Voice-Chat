@@ -34,7 +34,11 @@ const apiVoiceChat = async (
 
     const replyResponse: ReplyMessage = JSON.parse(res[0]) as ReplyMessage;
 
-    if (!replyResponse.originalText || !replyResponse.replyMessage) {
+    if (!replyResponse.originalText) {
+      return { reply: null, error: 'No Audio Input, Speak again.' };
+    }
+
+    if (!replyResponse.replyMessage) {
       return { reply: null, error: 'Reply error, Try again.' };
     }
 

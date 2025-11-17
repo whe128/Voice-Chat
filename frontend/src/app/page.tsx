@@ -1,10 +1,13 @@
 'use client';
 
 import { FC } from 'react';
-import { redirect } from 'next/navigation';
+import { redirect, useSearchParams } from 'next/navigation';
 
 const Home: FC = () => {
-  redirect('/chat');
+  const searchParams = useSearchParams();
+  const query = searchParams.toString();
+
+  redirect(query ? `/chat?${query}` : `/chat`);
 };
 
 export default Home;

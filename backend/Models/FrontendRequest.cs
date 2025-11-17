@@ -27,5 +27,5 @@ public record VoiceChatRequest(string AudioType,
 
 public record ChatAnalyze(string ReplyMessage, string GrammarError);
 
-public record ChatReply(string OriginalText, string ReplyMessage, string GrammarError);
+public record ChatReply(string OriginalText = "", string ReplyMessage = "", string GrammarError = "");
 public record TranslationReply(string TranslatedText);

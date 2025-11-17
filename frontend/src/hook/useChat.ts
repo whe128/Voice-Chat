@@ -45,7 +45,7 @@ const useChat = (
 
         return null;
       } else if (!resReply) {
-        setError('TextChat Reply error, Try again.');
+        setError('TextChat Reply error, Please Send again.');
 
         return null;
       } else {
@@ -91,7 +91,7 @@ const useChat = (
 
         return null;
       } else if (!reply) {
-        setError('VoiceChat Reply error, Try again.');
+        setError('VoiceChat Reply error, Please Send again.');
 
         return null;
       } else {

@@ -159,6 +159,18 @@ public static class WebSocketRequestHandler
                                                     string requestText,
                                                     string language)
     {
+        // handle empty message
+        if (string.IsNullOrEmpty(requestText))
+        {
+            Logger.Log($"⚠️ Empty chat request from {userEmail}:[{userId}]");
+
+            var emptyReply = new ChatReply();
+            string emptyReplyJson = JsonSerializer.Serialize(emptyReply, JsonSettings.CamelCase);
+            await AppWebSocketManager.SendTextToUserAsync(socket, emptyReplyJson);
+            return;
+        }
+
+
         // add out message to chat history
         if (!string.Equals(userEmail, "guest", StringComparison.OrdinalIgnoreCase))
         {
