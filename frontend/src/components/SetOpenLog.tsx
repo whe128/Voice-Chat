@@ -93,7 +93,7 @@ const SetOpenLog: FC<{
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    const accessKey = process.env.NEXT_PUBLIC_BACKEND_ACCESS_KEY;
+    const accessKey = process.env.NEXT_PUBLIC_ACCESS_SET_LOG_KEY;
     if (accessPassword !== accessKey) {
       setError('Incorrect admin password');
 
