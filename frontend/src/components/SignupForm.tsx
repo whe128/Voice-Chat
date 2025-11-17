@@ -23,13 +23,17 @@ const SignupForm: FC = () => {
         Sign Up
       </div>
 
-      <div className="flex flex-col gap-3 w-7/8 h-130 mt-10">
+      <div className="flex flex-col gap-1 w-7/8 h-113 mt-5">
         {/* User / Password Form */}
 
-        <div className="flex flex-col gap-3">
-          {signUpError && (
-            <div className="text-red-500 text-sm ">{signUpError}</div>
-          )}
+        <div className="flex flex-col gap-1">
+          <div
+            className={`text-red-500 text-sm
+            ${signUpError ? 'visible' : 'invisible'}`}
+          >
+            {signUpError ? signUpError : 'Placeholder'}
+          </div>
+
           <form
             onSubmit={(e) => {
               e.preventDefault();

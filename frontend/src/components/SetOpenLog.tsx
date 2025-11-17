@@ -100,12 +100,13 @@ const SetOpenLog: FC<{
       return;
     }
 
+    setSetApproved(true);
+
     void fetchWithTimeout();
-    setSetApproved(false);
   };
 
   return (
-    <div className="flex flex-col p-4 gap-10 w-full h-full bg-pink-100 rounded-2xl overflow-y-auto">
+    <div className="flex flex-col p-4 w-full h-full bg-pink-100 rounded-2xl overflow-y-auto">
       <div className="text-center text-blue-800 text-3xl font-bold select-none">
         Open Log
       </div>
@@ -118,14 +119,18 @@ const SetOpenLog: FC<{
         🏠Home
       </Link>
 
-      <div className="flex w-full h-1/2 flex-col items-center">
+      <div className="flex w-full h-1/2 flex-col items-center mt-10">
         {!setApproved ? (
           <form
             onSubmit={(e) => handleSubmit(e)}
             className="flex flex-col justify-center h-full gap-4 w-7/8"
           >
-            {error && <div className="text-red-500 text-sm ">{error}</div>}
-
+            <div
+              className={`text-red-500 text-sm
+              ${error ? 'visible' : 'invisible'}`}
+            >
+              {error ? error : 'Placeholder'}
+            </div>
             <input
               type="password"
               placeholder="Admin password"

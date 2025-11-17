@@ -29,11 +29,15 @@ const LoginForm: FC = () => {
         Login
       </div>
 
-      <div className="flex flex-col gap-3 w-7/8 h-130 mt-10">
+      <div className="flex flex-col gap-1 w-7/8 h-113 mt-5">
         {/* User / Password Form */}
-        {loginError && (
-          <div className="text-red-500 text-sm ">{loginError}</div>
-        )}
+
+        <div
+          className={`text-red-500 text-sm
+          ${loginError ? 'visible' : 'invisible'}`}
+        >
+          {loginError ? loginError : 'Placeholder'}
+        </div>
         <form
           onSubmit={(e) => {
             e.preventDefault();
