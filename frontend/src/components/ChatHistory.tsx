@@ -34,17 +34,19 @@ const ChatHistory: FC<ChatHistoryProps> = ({
       ref={scrollRef}
       className="flex flex-col h-full gap-2 py-1 overflow-y-auto scrollbar-custom -mr-2"
     >
-      {chatMessages.map((msg: ChatMessage) => (
-        <MessageBox
-          key={msg.id}
-          text={msg.text}
-          isSendOut={msg.isSendOut}
-          hasGrammarCheck={msg.hasGrammarCheck}
-          grammarHasChecked={msg.grammarHasChecked}
-          grammarError={msg.grammarError}
-          autoRead={msg.autoRead}
-        />
-      ))}
+      {chatMessages
+        .filter((msg: ChatMessage) => msg.text && msg.text.trim() !== '')
+        .map((msg: ChatMessage) => (
+          <MessageBox
+            key={msg.id}
+            text={msg.text}
+            isSendOut={msg.isSendOut}
+            hasGrammarCheck={msg.hasGrammarCheck}
+            grammarHasChecked={msg.grammarHasChecked}
+            grammarError={msg.grammarError}
+            autoRead={msg.autoRead}
+          />
+        ))}
     </div>
   ) : (
     <ChatHistorySuspense />

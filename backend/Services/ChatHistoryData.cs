@@ -7,6 +7,12 @@ public class ChatHistoryData
 {
     public static async Task<bool> AddMessageAsync(Guid userId, string message, bool isSendOut)
     {
+        // not adding empty messages to the database
+        if (string.IsNullOrEmpty(message))
+        {
+            return false;
+        }
+
         try
         {
             var client = await DataService.GetClientAsync();
