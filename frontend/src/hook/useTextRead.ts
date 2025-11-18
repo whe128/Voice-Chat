@@ -6,6 +6,9 @@ import apiTextRead from '@/api/textRead';
 import useUserInfo from './useUserInfo';
 import { logger } from '@/utils/logger';
 
+const unlockedBlob = new Blob([new Uint8Array([0])], { type: 'audio/wav' });
+const url = URL.createObjectURL(unlockedBlob);
+
 const useTextRead = (
   getWebSocket: (() => Promise<WebSocket>) | null,
   text: string,
@@ -16,6 +19,7 @@ const useTextRead = (
   isPlaying: boolean;
   error: string;
   handleTextRead: () => Promise<unknown>;
+  getUnlockedAudio: () => Promise<HTMLAudioElement>;
 } => {
   const [isLoading, setIsLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -62,7 +66,7 @@ const useTextRead = (
       });
     }
 
-    // if the audioRef is unlocked, just set the src
+    //audioRef may come from unlockedAudio, so need to set src each time
     audioRef.current.src = audioUrlRef.current;
 
     try {
@@ -153,12 +157,25 @@ const useTextRead = (
     }
   };
 
+  const getUnlockedAudio = async (): Promise<HTMLAudioElement> => {
+    // new a unlocked audio, then add to the MessageBox
+    const newAudio = new Audio(url);
+    try {
+      await newAudio.play();
+    } catch {
+      // do nothing
+    }
+
+    return newAudio;
+  };
+
   return {
     isProcessing,
     isLoading,
     isPlaying,
     error,
     handleTextRead,
+    getUnlockedAudio,
   };
 };
 

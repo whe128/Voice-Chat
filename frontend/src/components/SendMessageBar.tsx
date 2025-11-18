@@ -44,6 +44,7 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
     isLoading: isAudioLoading,
     isPlaying: isAudioPlaying,
     handleTextRead,
+    getUnlockedAudio,
   } = useTextRead(wsContext?.getWebSocket ?? null, showMessage);
 
   const {
@@ -123,45 +124,42 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
       return;
     }
 
-    const reply = await handleVoiceChat(voiceBlob);
-    // add send message to chat history
-    if (!reply) {
-      if (chatError) {
-        alert(`${chatError}\nPlease send again.`);
-      } else {
-        alert('Failed to get reply from server\n Please send again.');
-      }
-
-      return;
-    }
+    const unlockedAudio = await getUnlockedAudio();
 
     const messageId = Date.now().toString();
     // add a send message
     addMessage({
       id: messageId,
-      text: reply.originalText,
       isSendOut: true,
       hasGrammarCheck: true,
-      grammarHasChecked: true,
-      grammarError: reply.grammarError,
     });
-
-    // new a unlocked audio, then add to the MessageBox
-    const unlockedAudio = new Audio();
-    try {
-      await unlockedAudio.play();
-    } catch {
-      // do nothing
-    }
 
     // add a reply message
     addMessage({
       id: `reply${messageId}`,
-      text: reply.replyMessage,
       isSendOut: false,
       autoRead: true,
       unlockedAudio,
     });
+
+    const reply = await handleVoiceChat(voiceBlob);
+
+    // update grammar check and voice text result
+    if (reply) {
+      updateMessageText(`${messageId}`, reply.originalText);
+      updateGrammarCheck(messageId, reply.grammarError);
+      updateMessageText(`reply${messageId}`, reply.replyMessage);
+    } else {
+      deleteMessage(messageId);
+      // remove the placeholder reply message
+      deleteMessage(`reply${messageId}`);
+
+      if (chatError) {
+        alert(`${chatError}\nPlease send again.`);
+      } else {
+        alert('Failed to get reply from server\n Please send again.');
+      }
+    }
   };
 
   const handleSendText = async (): Promise<void> => {
@@ -171,6 +169,7 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
     const sendText = inputText;
     setInputText('');
 
+    const unlockedAudio = await getUnlockedAudio();
     const messageId = Date.now().toString();
 
     // add send message to chat history
@@ -186,13 +185,13 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
       id: `reply${messageId}`,
       isSendOut: false,
       autoRead: true,
+      unlockedAudio,
     });
 
     const reply = await handleTextChat(sendText);
 
     // update grammar check result
     if (reply) {
-      updateMessageText(`${messageId}`, reply.originalText);
       updateGrammarCheck(messageId, reply.grammarError);
       updateMessageText(`reply${messageId}`, reply.replyMessage);
     } else {
@@ -211,7 +210,7 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
 
   return (
     <div
-      className={`flex gap-2 mt-2 justify-between items-center
+      className={`flex mt-1 gap-2 justify-between items-center
         ${hasGetChatHistory ? '' : 'opacity-50 pointer-events-none'}`}
     >
       {isChatMode ? (
@@ -222,7 +221,7 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
               : (): void => void start()
           }
           disabled={isChatting}
-          className={`flex justify-center items-center w-4/5 h-9 select-none ml-5 focus:outline-none background bg-gray-50 rounded-xl border border-gray-300 text-gray-400 transition-transform duration-200
+          className={`flex justify-center items-center w-4/5 h-9 select-none ml-10 focus:outline-none background bg-gray-50 rounded-xl border border-gray-300 text-gray-400 transition-transform duration-200
             ${isChatting ? 'pointer-events-none' : 'hover:cursor-pointer active:scale-95'}`}
         >
           {isChatting ? (
@@ -261,7 +260,7 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
         </button>
       ) : (
         <div className="flex gap-1 w-full justify-between items-center">
-          <div>
+          <div className="flex flex-col gap-1 items-start justify-center w-12">
             <button
               disabled={translationDisable}
               onClick={toggleTranslation}
@@ -269,6 +268,21 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
                 ${translationDisable ? (translationOpacity ? 'opacity-20' : '') : 'hover:cursor-pointer active:scale-85'}`}
             >
               🔁
+            </button>
+
+            <button
+              onClick={(): void => void handleTextRead()}
+              disabled={speakerDisable}
+              className={`select-none transition-transform duration-200
+                ${speakerDisable ? (speakerOpacity ? 'opacity-20' : '') : 'hover:cursor-pointer active:scale-85'}`}
+            >
+              {isAudioLoading ? (
+                <div className="w-6 h-6 border-4 border-gray-300 border-t-green-500 rounded-full animate-spin" />
+              ) : (
+                <div className="flex items-center text-3xl">
+                  {isAudioPlaying ? speakerFrames[speakerIndex] : '🔉'}
+                </div>
+              )}
             </button>
           </div>
 
@@ -317,23 +331,6 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
                 ${sendDisable ? (sendOpacity ? 'opacity-20' : '') : 'hover:cursor-pointer active:scale-85'}`}
             >
               📤
-            </button>
-          </div>
-
-          <div className="h-full w-14">
-            <button
-              onClick={(): void => void handleTextRead()}
-              disabled={speakerDisable}
-              className={`text-3xl select-none transition-transform duration-200
-                ${speakerDisable ? (speakerOpacity ? 'opacity-20' : '') : 'hover:cursor-pointer active:scale-85'}`}
-            >
-              {isAudioLoading ? (
-                <div className="w-6 h-6 border-4 border-gray-300 border-t-green-500 rounded-full animate-spin" />
-              ) : isAudioPlaying ? (
-                speakerFrames[speakerIndex]
-              ) : (
-                '🔉'
-              )}
             </button>
           </div>
         </div>

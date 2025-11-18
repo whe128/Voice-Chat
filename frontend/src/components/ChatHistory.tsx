@@ -35,7 +35,9 @@ const ChatHistory: FC<ChatHistoryProps> = ({
       className="flex flex-col h-full gap-2 py-1 overflow-y-auto scrollbar-custom -mr-2"
     >
       {chatMessages
-        .filter((msg: ChatMessage) => msg.text && msg.text.trim() !== '')
+        .filter(
+          (msg: ChatMessage) => msg.text !== '' && msg.text?.trim() !== '',
+        )
         .map((msg: ChatMessage) => (
           <MessageBox
             key={msg.id}
