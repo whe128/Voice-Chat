@@ -16,7 +16,6 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
   hasGetChatHistory = false,
 }: SendMessageBarProps) => {
   const wsContext = useContext(WebSocketContext);
-  const ws = wsContext?.ws ?? null;
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const [isChatMode, setIsChatMode] = useState(true);
@@ -32,7 +31,7 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
     isTranslating,
     error: translatedError,
     handleTranslation,
-  } = useTextTranslation(ws, inputText);
+  } = useTextTranslation(wsContext?.getWebSocket ?? null, inputText);
 
   const showMessage = showTranslation
     ? translatedError
@@ -45,14 +44,14 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
     isLoading: isAudioLoading,
     isPlaying: isAudioPlaying,
     handleTextRead,
-  } = useTextRead(ws, showMessage);
+  } = useTextRead(wsContext?.getWebSocket ?? null, showMessage);
 
   const {
     error: chatError,
     isChatting,
     handleTextChat,
     handleVoiceChat,
-  } = useChat(ws);
+  } = useChat(wsContext?.getWebSocket ?? null);
 
   const { isRecording, start, stop } = useRecorder();
 
@@ -62,7 +61,7 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
     updateMessageText,
     updateHasGrammarCheck,
     deleteMessage,
-  } = useChatHistory(ws);
+  } = useChatHistory(wsContext?.getWebSocket ?? null);
 
   // disable button
   const translationDisable = isTranslating || isAudioProcessing;
@@ -127,7 +126,11 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
     const reply = await handleVoiceChat(voiceBlob);
     // add send message to chat history
     if (!reply) {
-      alert(chatError || 'Failed to get reply from server. Please send again.');
+      if (chatError) {
+        alert(`${chatError}\nPlease send again.`);
+      } else {
+        alert('Failed to get reply from server\n Please send again.');
+      }
 
       return;
     }
@@ -189,7 +192,11 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
       // close the grammar check for the sent message
       updateHasGrammarCheck(messageId, false);
 
-      alert(chatError || 'Failed to get reply from server. Please send again.');
+      if (chatError) {
+        alert(`${chatError}\nPlease send again.`);
+      } else {
+        alert('Failed to get reply from server\n Please send again.');
+      }
     }
   };
 
@@ -207,7 +214,7 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
           }
           disabled={isChatting}
           className={`flex justify-center items-center w-4/5 h-9 select-none ml-5 focus:outline-none background bg-gray-50 rounded-xl border border-gray-300 text-gray-400 transition-transform duration-200
-            ${isChatting ? 'pointer-events-none opacity-50' : 'hover:cursor-pointer active:scale-95'}`}
+            ${isChatting ? 'pointer-events-none' : 'hover:cursor-pointer active:scale-95'}`}
         >
           {isChatting ? (
             <div className="flex items-center gap-4">
@@ -222,6 +229,7 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
                 alt="Logo"
                 width={25}
                 height={25}
+                {...{ draggable: false }}
                 priority
               />
               Tap to stop
@@ -235,6 +243,7 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
                 width={25}
                 height={25}
                 style={{ width: 'auto', height: '25px' }}
+                {...{ draggable: false }}
                 priority
               />
               Tap to record
@@ -322,10 +331,22 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
       )}
       <button
         onClick={() => setIsChatMode(!isChatMode)}
-        className={`text-2xl select-none background bg-yellow-300 rounded-lg transition-transform duration-200
+        className={`text-2xl select-none background rounded-lg transition-transform duration-200 focus:outline-none
              ${switchModeDisable ? (switchModeOpacity ? 'opacity-20' : '') : 'hover:cursor-pointer active:scale-85'}`}
       >
-        {isChatMode ? '⌨️' : '🎤'}
+        {isChatMode ? (
+          '⌨️'
+        ) : (
+          <Image
+            className="block select-none mx-auto "
+            src="/microphone.png"
+            alt="Logo"
+            width={35}
+            height={35}
+            {...{ draggable: false }}
+            priority
+          />
+        )}
       </button>
     </div>
   );

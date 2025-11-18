@@ -12,7 +12,7 @@ const apiTextTranslation = async (
 ): Promise<TextTranslationResponse> => {
   try {
     if (ws?.readyState !== WebSocket.OPEN) {
-      return { translatedText: '', error: 'WebSocket is not connected' };
+      return { translatedText: '', error: 'Server is not connected' };
     }
 
     ws.send(JSON.stringify(requestBody));

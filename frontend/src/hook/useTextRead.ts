@@ -7,7 +7,7 @@ import useUserInfo from './useUserInfo';
 import { logger } from '@/utils/logger';
 
 const useTextRead = (
-  ws: WebSocket | null,
+  getWebSocket: (() => Promise<WebSocket>) | null,
   text: string,
 ): {
   readAudio: Blob | null;
@@ -102,6 +102,7 @@ const useTextRead = (
 
     setIsLoading(true);
 
+    const ws = getWebSocket ? await getWebSocket() : null;
     const { readAudio: resReplyAudio, error: responseError } =
       await apiTextRead(ws, {
         type: 'textRead',

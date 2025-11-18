@@ -9,9 +9,7 @@ interface TempKeyResponse {
 }
 
 interface IWebSocketContext {
-  ws: WebSocket | null;
-  sendMessage: (message: string) => void;
-  sendBinary: (data: ArrayBuffer) => void;
+  getWebSocket: () => Promise<WebSocket>;
 }
 
 export const WebSocketContext = createContext<IWebSocketContext | null>(null);
@@ -44,6 +42,26 @@ export const waitForResponse = (
     });
   });
 
+export const waitForOpen = (ws: WebSocket, timeout = 7000): Promise<void> =>
+  new Promise((resolve, reject) => {
+    if (ws.readyState === WebSocket.OPEN) {
+      return resolve();
+    }
+
+    const timer = setTimeout(() => {
+      ws.removeEventListener('open', onOpen);
+      reject(new Error('WebSocket connection timeout'));
+    }, timeout);
+
+    const onOpen = (): void => {
+      clearTimeout(timer);
+      ws.removeEventListener('open', onOpen);
+      resolve();
+    };
+
+    ws.addEventListener('open', onOpen);
+  });
+
 const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
   // will not render
   const wsRef = useRef<WebSocket | null>(null);
@@ -58,7 +76,32 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
   const searchParams = useSearchParams();
   const query = searchParams.toString();
 
-  const setupWebSocket = async (): Promise<void> => {
+  const getWebSocket = async (): Promise<WebSocket> => {
+    // return existing connection if open
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      return wsRef.current;
+    }
+
+    // avoid duplicate connection
+    if (isConnectingRef.current) {
+      // wait until connection is established
+      return new Promise((resolve, reject) => {
+        const interval = setInterval(() => {
+          if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+            clearInterval(interval);
+
+            resolve(wsRef.current);
+          }
+        }, 100);
+        setTimeout(() => {
+          clearInterval(interval);
+          reject(new Error('WebSocket connect timeout'));
+        }, 5000);
+      });
+    }
+
+    isConnectingRef.current = true;
+
     try {
       const hostUrl = process.env.NEXT_PUBLIC_BACKEND_ACCESS_URL;
       const accessKey = process.env.NEXT_PUBLIC_BACKEND_ACCESS_KEY;
@@ -97,11 +140,15 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
 
       ws.onclose = (): void => {
         logger.log('❌ WebSocket Connection closed');
+        setConnected(false);
+        wsRef.current = null;
+        isConnectingRef.current = false;
       };
 
       ws.onerror = (error): void => {
         logger.error('❌ WebSocket error:', error);
         setConnected(false);
+        wsRef.current = null;
         isConnectingRef.current = false;
       };
 
@@ -132,8 +179,16 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
 
       ws.addEventListener('message', handleMessage);
       ws.addEventListener('close', handleClose);
+
+      await waitForOpen(ws);
+      setConnected(true);
+
+      return ws;
     } catch (error) {
-      logger.error('Error setting up WebSocket:', error);
+      logger.error('Error get WebSocket:', error);
+      throw error;
+    } finally {
+      isConnectingRef.current = false;
     }
   };
 
@@ -161,8 +216,9 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
 
     // setup WebSocket connection
     if (!wsRef.current && !isConnectingRef.current) {
-      isConnectingRef.current = true;
-      void setupWebSocket();
+      console.log('WebSocketProvider setting------------- up websocket...');
+      //here just to trigger the connection, not use the ws
+      void getWebSocket();
 
       const timeout = setTimeout(() => {
         if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
@@ -183,11 +239,23 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
     };
   }, [pathname]);
 
+  console.log(
+    'WebSocketProvider render, connected:',
+    connected,
+    'path:',
+    pathname,
+  );
   if (pathname && !pathname.startsWith('/chat')) {
+    console.log(
+      'WebSocketProvider not /cha----------------t path, no ws needed',
+    );
+
     return children;
   }
 
   if (!connected) {
+    console.log('WebSocketProvider connectiddddddddng...');
+
     return (
       <div className="flex items-center justify-center h-screen w-full bg-white">
         <div className="flex flex-col items-center space-y-4">
@@ -201,13 +269,7 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
   }
 
   return (
-    <WebSocketContext.Provider
-      value={{
-        ws: wsRef.current,
-        sendMessage: (msg: string) => wsRef.current?.send(msg),
-        sendBinary: (data: ArrayBuffer) => wsRef.current?.send(data),
-      }}
-    >
+    <WebSocketContext.Provider value={{ getWebSocket }}>
       {children}
     </WebSocketContext.Provider>
   );

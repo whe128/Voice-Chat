@@ -6,7 +6,7 @@ import apiVoiceSample from '@/api/voiceSample';
 import { logger } from '@/utils/logger';
 
 const useVoiceSample = (
-  ws: WebSocket | null,
+  getWebSocket: (() => Promise<WebSocket>) | null,
 ): {
   isLoading: boolean;
   isPlaying: boolean;
@@ -52,6 +52,8 @@ const useVoiceSample = (
 
     // fetch new voice sample
     setIsLoading(true);
+
+    const ws = getWebSocket ? await getWebSocket() : null;
 
     const { sampleAudio, error: responseError } = await apiVoiceSample(ws, {
       type: 'voiceSample',

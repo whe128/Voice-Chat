@@ -6,7 +6,7 @@ import useUserInfo from './useUserInfo';
 import { logger } from '@/utils/logger';
 
 const useTextTranslation = (
-  ws: WebSocket | null,
+  getWebSocket: (() => Promise<WebSocket>) | null,
   text: string,
 ): {
   translatedText: string;
@@ -47,6 +47,8 @@ const useTextTranslation = (
     needTranslateText.current = text;
 
     setIsTranslating(true);
+
+    const ws = getWebSocket ? await getWebSocket() : null;
 
     const { translatedText: resTranslate, error: responseError } =
       await apiTextTranslation(ws, {

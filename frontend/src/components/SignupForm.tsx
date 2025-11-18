@@ -100,6 +100,7 @@ const SignupForm: FC = () => {
           alt="Logo"
           width={200}
           height={200}
+          {...{ draggable: false }}
           priority
         />
       </div>

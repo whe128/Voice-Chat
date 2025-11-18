@@ -14,7 +14,7 @@ const apiTextRead = async (
   logger.log(`apiTextRead requestBody: ${JSON.stringify(requestBody)}`);
   try {
     if (ws?.readyState !== WebSocket.OPEN) {
-      return { readAudio: null, error: 'WebSocket is not connected' };
+      return { readAudio: null, error: 'Server is not connected' };
     }
 
     ws.send(JSON.stringify(requestBody));

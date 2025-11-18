@@ -15,9 +15,10 @@ const AiChat: FC<{
 }> = ({ handleOpenSetting }) => {
   const { user } = useUserInfo();
   const wsContext = useContext(WebSocketContext);
-  const ws = wsContext?.ws ?? null;
   const [hasGetChatHistory, setHasGetChatHistory] = useState(false);
-  const { chatMessages, handleGetChatHistory } = useChatHistory(ws);
+  const { chatMessages, handleGetChatHistory } = useChatHistory(
+    wsContext?.getWebSocket ?? null,
+  );
   const router = useRouter();
 
   useEffect(() => {
@@ -50,7 +51,7 @@ const AiChat: FC<{
       <div className="absolute top-4 left-6 flex flex-col gap- items-start">
         <button
           onClick={handleOpenSetting}
-          className="text-xl px-3 select-none rounded-md hover:bg-gray-50 hover:cursor-pointer active:scale-95 origin-left transition-transform duration-200"
+          className="text-xl px-3 select-none rounded-md text-gray-500 hover:bg-gray-50 hover:cursor-pointer active:scale-95 origin-left transition-transform duration-200"
         >
           ⚙️ Option
         </button>
@@ -77,6 +78,7 @@ const AiChat: FC<{
         alt="Logo"
         width={60}
         height={60}
+        {...{ draggable: false }}
         priority
       />
 

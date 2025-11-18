@@ -39,13 +39,12 @@ const VoiceDropdown: FC<{
   const [loadingVoice, setLoadingVoice] = useState<string | null>(null);
   const speakerFrames = ['🔈', '🔉', '🔊'];
   const [speakerIndex, setSpeakerIndex] = useState(0);
-  const ws = wsContext?.ws ?? null;
 
   const {
     isLoading: isAudioLoading,
     isPlaying: isAudioPlaying,
     handleVoiceSample,
-  } = useVoiceSample(ws);
+  } = useVoiceSample(wsContext?.getWebSocket ?? null);
 
   useEffect(() => {
     if (!isAudioPlaying) {

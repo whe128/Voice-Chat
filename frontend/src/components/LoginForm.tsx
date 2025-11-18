@@ -122,6 +122,7 @@ const LoginForm: FC = () => {
               width={25}
               height={25}
               className="w-[25px] h-[25px]"
+              {...{ draggable: false }}
               priority
             />
           )}
@@ -161,6 +162,7 @@ const LoginForm: FC = () => {
           alt="Logo"
           width={200}
           height={200}
+          {...{ draggable: false }}
           priority
         />
       </div>

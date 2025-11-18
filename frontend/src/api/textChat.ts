@@ -14,7 +14,7 @@ const apiTextChat = async (
   logger.log(`apiTextChat requestBody: ${JSON.stringify(requestBody)}`);
   try {
     if (ws?.readyState !== WebSocket.OPEN) {
-      return { reply: null, error: 'WebSocket is not connected' };
+      return { reply: null, error: 'Server is not connected' };
     }
 
     ws.send(JSON.stringify(requestBody));

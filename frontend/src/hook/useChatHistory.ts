@@ -8,7 +8,7 @@ import { ChatMessage } from '@/types/message';
 import { useSession } from 'next-auth/react';
 
 const useChatHistory = (
-  ws: WebSocket | null,
+  getWebSocket: (() => Promise<WebSocket>) | null,
 ): {
   chatMessages: ChatMessage[];
   isLoading: boolean;
@@ -39,6 +39,8 @@ const useChatHistory = (
       if (userEmail && userEmail === 'guest') {
         return [] as ChatMessage[];
       }
+
+      const ws = getWebSocket ? await getWebSocket() : null;
 
       const { chatMessages: apiChatMessages, error: responseError } =
         await apiTextHistory(ws);

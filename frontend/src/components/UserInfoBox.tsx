@@ -29,7 +29,7 @@ const UserInfoBox: FC = () => {
   }, []);
 
   return (
-    <div className="gap-0.5 flex flex-col">
+    <div className="gap-0.5 flex flex-col font-bold text-gray-600">
       <button
         ref={triggerRef}
         onClick={() => setOpenSignOut(!openSignOut)}

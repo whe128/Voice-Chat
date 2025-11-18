@@ -12,7 +12,7 @@ const apiTextHistory = async (
 ): Promise<TextHistoryResponse> => {
   try {
     if (ws?.readyState !== WebSocket.OPEN) {
-      return { chatMessages: [], error: 'WebSocket is not connected' };
+      return { chatMessages: [], error: 'Server is not connected' };
     }
 
     ws.send(JSON.stringify({ type: 'textHistory' } as WebSocketRequest));

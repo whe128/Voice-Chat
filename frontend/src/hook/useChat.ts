@@ -7,7 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import useUserInfo from './useUserInfo';
 
 const useChat = (
-  ws: WebSocket | null,
+  getWebSocket: (() => Promise<WebSocket>) | null,
 ): {
   isChatting: boolean;
   error: string;
@@ -32,6 +32,8 @@ const useChat = (
 
     setIsChatting(true);
     try {
+      const ws = getWebSocket ? await getWebSocket() : null;
+
       const { reply: resReply, error: textChatError } = await apiTextChat(ws, {
         type: 'textChat',
         content: text,
@@ -74,6 +76,7 @@ const useChat = (
     setIsChatting(true);
 
     try {
+      const ws = getWebSocket ? await getWebSocket() : null;
       const { reply, error: voiceChatError } = await apiVoiceChat(
         ws,
         {

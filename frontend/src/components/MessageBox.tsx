@@ -45,7 +45,6 @@ const MessageBox: FC<MessageBoxProps> = ({
   autoRead = false,
 }) => {
   const wsContext = useContext(WebSocketContext);
-  const ws = wsContext?.ws ?? null;
   const [openGrammarError, setOpenGrammarError] = useState(false);
   const [showTranslation, setShowTranslation] = useState(false);
 
@@ -57,7 +56,7 @@ const MessageBox: FC<MessageBoxProps> = ({
     isTranslating,
     error: translatedError,
     handleTranslation,
-  } = useTextTranslation(ws, text);
+  } = useTextTranslation(wsContext?.getWebSocket ?? null, text);
 
   const showMessage = showTranslation
     ? translatedError
@@ -70,7 +69,7 @@ const MessageBox: FC<MessageBoxProps> = ({
     isLoading: isAudioLoading,
     isPlaying: isAudioPlaying,
     handleTextRead,
-  } = useTextRead(ws, showMessage);
+  } = useTextRead(wsContext?.getWebSocket ?? null, showMessage);
 
   // whole component disable for click
   const shouldDisable = isTranslating || isAudioProcessing;

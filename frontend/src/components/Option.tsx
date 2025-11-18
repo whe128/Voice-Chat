@@ -22,6 +22,7 @@ const Option: FC<{
         alt="Logo"
         width={60}
         height={60}
+        {...{ draggable: false }}
         priority
       />
 

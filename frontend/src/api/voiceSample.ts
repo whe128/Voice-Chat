@@ -14,7 +14,7 @@ const apiVoiceSample = async (
   logger.log(`apiTextVoice requestBody: ${JSON.stringify(requestBody)}`);
   try {
     if (ws?.readyState !== WebSocket.OPEN) {
-      return { sampleAudio: null, error: 'WebSocket is not connected' };
+      return { sampleAudio: null, error: 'Server is not connected' };
     }
 
     ws.send(JSON.stringify(requestBody));
