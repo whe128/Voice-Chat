@@ -56,7 +56,6 @@ const useChatHistory = (
   });
 
   const addMessage = (msg: ChatMessage, targetId?: string): void => {
-
     queryClient.setQueryData<ChatMessage[]>(['chatHistory'], (oldData = []) => {
       if (!targetId) {
         return [...oldData, msg];

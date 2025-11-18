@@ -3,9 +3,13 @@
 import { FC, Suspense, useState } from 'react';
 import AiChat from '@/components/AiChat';
 import Option from '@/components/Option';
+import useUserInfo from '@/hook/useUserInfo';
 
 const TestChat: FC = () => {
-  const [showOption, setShowOption] = useState(false);
+  const { user } = useUserInfo();
+
+  const [showOption, setShowOption] = useState(!user?.language || !user.voice);
+
   const toggleShowOption = (): void => {
     setShowOption(!showOption);
   };

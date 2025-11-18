@@ -221,7 +221,7 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
               : (): void => void start()
           }
           disabled={isChatting}
-          className={`flex justify-center items-center w-4/5 h-9 select-none ml-10 focus:outline-none background bg-gray-50 rounded-xl border border-gray-300 text-gray-400 transition-transform duration-200
+          className={`flex justify-center items-center w-4/5 h-9 select-none ml-3 focus:outline-none background bg-gray-50 rounded-xl border border-gray-300 text-gray-400 transition-transform duration-200
             ${isChatting ? 'pointer-events-none' : 'hover:cursor-pointer active:scale-95'}`}
         >
           {isChatting ? (

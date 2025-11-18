@@ -196,7 +196,7 @@ const MessageBox: FC<MessageBoxProps> = ({
                   ❌Grammar Error
                 </span>
                 {openGrammarError && (
-                  <div className="px-1 break-words break-all">
+                  <div className="px-1 break-words break-all text-left">
                     {grammarError}
                   </div>
                 )}

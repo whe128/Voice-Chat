@@ -10,6 +10,7 @@ interface TempKeyResponse {
 
 interface IWebSocketContext {
   getWebSocket: () => Promise<WebSocket>;
+  isConnected?: boolean;
 }
 
 export const WebSocketContext = createContext<IWebSocketContext | null>(null);
@@ -258,7 +259,7 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
   }
 
   return (
-    <WebSocketContext.Provider value={{ getWebSocket }}>
+    <WebSocketContext.Provider value={{ getWebSocket, isConnected: connected }}>
       {children}
     </WebSocketContext.Provider>
   );
