@@ -41,6 +41,16 @@ const useTextRead = (
     cleanup();
   }, [voice, readAudioType]);
 
+  useEffect(() => {
+    if (unlockedAudio) {
+      audioRef.current = unlockedAudio;
+      audioRef.current.addEventListener('ended', () => {
+        setIsPlaying(false);
+        setIsProcessing(false);
+      });
+    }
+  }, [unlockedAudio]);
+
   // cleanup on unmount
   useEffect(() => (): void => cleanup(), []);
 
@@ -96,7 +106,7 @@ const useTextRead = (
     // new text, fetch new audio
     if (readAudioRef.current) {
       readText.current = '';
-      audioRef.current = null;
+      readAudioRef.current = null;
       if (audioUrlRef.current) {
         URL.revokeObjectURL(audioUrlRef.current);
         audioUrlRef.current = null;
@@ -150,7 +160,8 @@ const useTextRead = (
   const cleanup = (): void => {
     stop();
     readText.current = '';
-    audioRef.current = null;
+    readAudioRef.current = null;
+    // not need to revoke unlockedAudio
     if (audioUrlRef.current) {
       URL.revokeObjectURL(audioUrlRef.current);
       audioUrlRef.current = null;

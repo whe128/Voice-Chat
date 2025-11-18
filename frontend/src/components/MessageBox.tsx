@@ -218,7 +218,7 @@ const MessageBox: FC<MessageBoxProps> = ({
         </button>
         <div className="flex justify-center w-fit max-w-5/9 min-w-1/9 min-h-7 h-content shadow text-sm p-1 break-words break-all rounded-xl bg-yellow-200/80">
           {isTranslating || !text ? (
-            <div className="w-5 h-5 border-4 border-gray-300 border-t-pink-500 rounded-full animate-spin" />
+            <div className="w-5 h-5 border-4 border-gray-300 border-t-pink-500 mx-5 rounded-full animate-spin" />
           ) : (
             <span
               className={
