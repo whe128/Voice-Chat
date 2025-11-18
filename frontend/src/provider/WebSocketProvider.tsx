@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useRef } from 'react';
+import React, { createContext, useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { logger } from '@/utils/logger';
@@ -67,7 +67,8 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
   const wsRef = useRef<WebSocket | null>(null);
 
   const router = useRouter();
-  const [connected, setConnected] = React.useState(false);
+  const [connected, setConnected] = useState(false);
+  const [initialized, setInitialized] = useState(false);
   const pathname = usePathname(); // current path
   const isConnectingRef = useRef(false);
   const { data: session } = useSession();
@@ -182,6 +183,7 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
 
       await waitForOpen(ws);
       setConnected(true);
+      setInitialized(true);
 
       return ws;
     } catch (error) {
@@ -248,7 +250,7 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
     return children;
   }
 
-  if (!connected) {
+  if (!connected && !initialized) {
     return (
       <div className="flex items-center justify-center h-screen w-full bg-white">
         <div className="flex flex-col items-center space-y-4">

@@ -10,18 +10,17 @@ const useTextRead = (
   getWebSocket: (() => Promise<WebSocket>) | null,
   text: string,
 ): {
-  readAudio: Blob | null;
   isProcessing: boolean;
   isLoading: boolean;
   isPlaying: boolean;
   error: string;
   handleTextRead: () => Promise<unknown>;
 } => {
-  const [readAudio, setReadAudio] = useState<Blob | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string>('');
+  const readAudioRef = useRef<Blob | null>(null);
   const readText = useRef<string>('');
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioUrlRef = useRef<string | null>(null);
@@ -39,21 +38,16 @@ const useTextRead = (
   // cleanup on unmount
   useEffect(() => (): void => cleanup(), []);
 
-  // automatic play when readAudio is set
-  useEffect(() => {
-    if (readAudio && !isPlaying && !isLoading) {
-      void handleReadAudio();
-    }
-  }, [readAudio]);
-
   const handleReadAudio = async (): Promise<void> => {
-    if (!readAudio) {
+    if (!readAudioRef.current) {
       return;
     }
     setIsPlaying(true);
 
     if (!audioUrlRef.current) {
-      const blob = new Blob([readAudio], { type: `audio/${readAudioType}` });
+      const blob = new Blob([readAudioRef.current], {
+        type: `audio/${readAudioType}`,
+      });
       audioUrlRef.current = URL.createObjectURL(blob);
     }
 
@@ -82,14 +76,14 @@ const useTextRead = (
 
     setIsProcessing(true);
     // same text, already have audio
-    if (text === readText.current && readAudio && !error) {
+    if (text === readText.current && readAudioRef.current && !error) {
       await handleReadAudio();
 
       return;
     }
 
     // new text, fetch new audio
-    if (readAudio) {
+    if (readAudioRef.current) {
       readText.current = '';
       audioRef.current = null;
       if (audioUrlRef.current) {
@@ -121,8 +115,10 @@ const useTextRead = (
       setIsProcessing(false);
     } else if (resReplyAudio) {
       logger.log('apiTextRead returned audio blob');
-      setReadAudio(resReplyAudio);
+      // save and auto play
+      readAudioRef.current = resReplyAudio;
       setError('');
+      await handleReadAudio();
     }
 
     setIsLoading(false);
@@ -149,7 +145,6 @@ const useTextRead = (
   };
 
   return {
-    readAudio,
     isProcessing,
     isLoading,
     isPlaying,
