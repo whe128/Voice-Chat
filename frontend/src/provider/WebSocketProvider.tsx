@@ -216,7 +216,6 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
 
     // setup WebSocket connection
     if (!wsRef.current && !isConnectingRef.current) {
-      console.log('WebSocketProvider setting------------- up websocket...');
       //here just to trigger the connection, not use the ws
       void getWebSocket();
 
@@ -246,16 +245,10 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
     pathname,
   );
   if (pathname && !pathname.startsWith('/chat')) {
-    console.log(
-      'WebSocketProvider not /cha----------------t path, no ws needed',
-    );
-
     return children;
   }
 
   if (!connected) {
-    console.log('WebSocketProvider connectiddddddddng...');
-
     return (
       <div className="flex items-center justify-center h-screen w-full bg-white">
         <div className="flex flex-col items-center space-y-4">
