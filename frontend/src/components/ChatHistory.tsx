@@ -45,6 +45,7 @@ const ChatHistory: FC<ChatHistoryProps> = ({
             grammarHasChecked={msg.grammarHasChecked}
             grammarError={msg.grammarError}
             autoRead={msg.autoRead}
+            unlockedAudio={msg.unlockedAudio}
           />
         ))}
     </div>

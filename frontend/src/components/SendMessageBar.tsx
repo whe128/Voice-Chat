@@ -18,7 +18,7 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
   const wsContext = useContext(WebSocketContext);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const [isChatMode, setIsChatMode] = useState(true);
+  const [isChatMode, setIsChatMode] = useState(false);
   const [showTranslation, setShowTranslation] = useState(false);
 
   const [inputText, setInputText] = useState('');
@@ -146,12 +146,21 @@ const SendMessageBar: FC<SendMessageBarProps> = ({
       grammarError: reply.grammarError,
     });
 
+    // new a unlocked audio, then add to the MessageBox
+    const unlockedAudio = new Audio();
+    try {
+      await unlockedAudio.play();
+    } catch {
+      // do nothing
+    }
+
     // add a reply message
     addMessage({
       id: `reply${messageId}`,
       text: reply.replyMessage,
       isSendOut: false,
       autoRead: true,
+      unlockedAudio,
     });
   };
 

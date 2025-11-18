@@ -240,12 +240,6 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
     };
   }, [pathname]);
 
-  console.log(
-    'WebSocketProvider render, connected:',
-    connected,
-    'path:',
-    pathname,
-  );
   if (pathname && !pathname.startsWith('/chat')) {
     return children;
   }

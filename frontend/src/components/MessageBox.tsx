@@ -1,4 +1,4 @@
-import { FC, useState, useContext, useEffect } from 'react';
+import { FC, useState, useContext, useEffect, useRef } from 'react';
 import './custom.css';
 import useTextTranslation from '@/hook/useTextTranslation';
 import useTextRead from '@/hook/useTextRead';
@@ -34,6 +34,7 @@ interface MessageBoxProps {
   grammarHasChecked?: boolean;
   grammarError?: string;
   autoRead?: boolean;
+  unlockedAudio?: HTMLAudioElement;
 }
 
 const MessageBox: FC<MessageBoxProps> = ({
@@ -43,6 +44,7 @@ const MessageBox: FC<MessageBoxProps> = ({
   grammarHasChecked = false,
   grammarError = '',
   autoRead = false,
+  unlockedAudio = undefined,
 }) => {
   const wsContext = useContext(WebSocketContext);
   const [openGrammarError, setOpenGrammarError] = useState(false);
@@ -50,6 +52,8 @@ const MessageBox: FC<MessageBoxProps> = ({
 
   const speakerFrames = ['🔈', '🔉', '🔊'];
   const [speakerIndex, setSpeakerIndex] = useState(0);
+
+  const finishAutoReadRef = useRef(false);
 
   const {
     translatedText,
@@ -69,7 +73,7 @@ const MessageBox: FC<MessageBoxProps> = ({
     isLoading: isAudioLoading,
     isPlaying: isAudioPlaying,
     handleTextRead,
-  } = useTextRead(wsContext?.getWebSocket ?? null, showMessage);
+  } = useTextRead(wsContext?.getWebSocket ?? null, showMessage, unlockedAudio);
 
   // whole component disable for click
   const shouldDisable = isTranslating || isAudioProcessing;
@@ -98,10 +102,11 @@ const MessageBox: FC<MessageBoxProps> = ({
   }, [isAudioPlaying]);
 
   useEffect(() => {
-    if (autoRead && !isAudioProcessing) {
+    if (autoRead && !isAudioProcessing && !finishAutoReadRef.current) {
+      finishAutoReadRef.current = true;
       void handleTextRead();
     }
-  }, [text]);
+  }, [text, autoRead]);
 
   const toggleTranslation = (): void => {
     if (!isTranslating && !translatedText && !showTranslation) {
@@ -120,24 +125,24 @@ const MessageBox: FC<MessageBoxProps> = ({
   if (isSendOut) {
     return (
       <div className="flex w-full justify-end">
-        <div className="flex flex-col items-end max-w-6/9 min-w-2/9">
-          <div className="flex w-full items-center">
+        <div className="flex flex-col items-end max-w-6/9 min-w-3/12">
+          <div className="flex items-center">
             {!showTranslation && (
-              <div className="w-12 rotate-180">
+              <div className="w-7 rotate-180 flex items-center">
                 <button
                   onClick={() => handleReadAudio()}
                   disabled={shouldDisable}
                   className={`
-                text-xl px-1 select-none transition-transform duration-200
+                px-1 select-none transition-transform duration-200
                 ${shouldDisable ? '' : 'hover:cursor-pointer active:scale-85 '}
             `}
                 >
                   {isAudioLoading ? (
                     <div className="w-5 h-5 border-4 border-gray-300 border-t-green-500 rounded-full animate-spin" />
-                  ) : isAudioPlaying ? (
-                    speakerFrames[speakerIndex]
                   ) : (
-                    '🔉'
+                    <div className="w-8 h-5 flex text-xl items-center">
+                      {isAudioPlaying ? speakerFrames[speakerIndex] : '🔉'}
+                    </div>
                   )}
                 </button>
               </div>
@@ -187,7 +192,7 @@ const MessageBox: FC<MessageBoxProps> = ({
             ) : (
               <button
                 onClick={() => setOpenGrammarError(!openGrammarError)}
-                className={`flex flex-col text-xs shadow w-fit background bg-red-300 rounded-md hover:cursor-pointer px-1 py-0.5 mt-0 self-start
+                className={`flex flex-col text-xs shadow w-fit background mr-7 bg-red-300 rounded-md hover:cursor-pointer px-1 py-0.5 mt-0 self-start
                             ${showTranslation ? '' : 'ml-7'}`}
               >
                 <span className="text-[8px] select-none hover:cursor-pointer px-1 underline">
@@ -214,7 +219,7 @@ const MessageBox: FC<MessageBoxProps> = ({
         >
           🔁
         </button>
-        <div className="flex justify-center w-fit max-w-5/9 min-w-1/8 min-h-7 h-content shadow text-sm p-1 break-words break-all rounded-xl bg-yellow-200/80">
+        <div className="flex justify-center w-fit max-w-5/9 min-w-1/9 min-h-7 h-content shadow text-sm p-1 break-words break-all rounded-xl bg-yellow-200/80">
           {isTranslating || !text ? (
             <div className="w-5 h-5 border-4 border-gray-300 border-t-pink-500 rounded-full animate-spin" />
           ) : (
@@ -232,16 +237,16 @@ const MessageBox: FC<MessageBoxProps> = ({
             onClick={() => handleReadAudio()}
             disabled={shouldDisable}
             className={`
-                text-xl p-1 select-none transition-transform duration-200
+                p-1 select-none transition-transform duration-200
                 ${shouldDisable ? '' : 'hover:cursor-pointer active:scale-85 '}
             `}
           >
             {isAudioLoading ? (
               <div className="w-5 h-5 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin" />
-            ) : isAudioPlaying ? (
-              speakerFrames[speakerIndex]
             ) : (
-              '🔉'
+              <div className="w-8 h-5 flex items-center text-xl">
+                {isAudioPlaying ? speakerFrames[speakerIndex] : '🔉'}
+              </div>
             )}
           </button>
         )}

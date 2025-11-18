@@ -9,6 +9,7 @@ import { logger } from '@/utils/logger';
 const useTextRead = (
   getWebSocket: (() => Promise<WebSocket>) | null,
   text: string,
+  unlockedAudio?: HTMLAudioElement,
 ): {
   isProcessing: boolean;
   isLoading: boolean;
@@ -22,8 +23,9 @@ const useTextRead = (
   const [error, setError] = useState<string>('');
   const readAudioRef = useRef<Blob | null>(null);
   const readText = useRef<string>('');
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(unlockedAudio ?? null);
   const audioUrlRef = useRef<string | null>(null);
+
   const searchParams = useSearchParams();
   const { user } = useUserInfo();
 
@@ -51,6 +53,7 @@ const useTextRead = (
       audioUrlRef.current = URL.createObjectURL(blob);
     }
 
+    // not need to use unlocked audio, create a new one
     if (!audioRef.current) {
       audioRef.current = new Audio(audioUrlRef.current);
       audioRef.current.addEventListener('ended', () => {
@@ -58,6 +61,9 @@ const useTextRead = (
         setIsProcessing(false);
       });
     }
+
+    // if the audioRef is unlocked, just set the src
+    audioRef.current.src = audioUrlRef.current;
 
     try {
       await audioRef.current.play();
@@ -77,6 +83,7 @@ const useTextRead = (
     setIsProcessing(true);
     // same text, already have audio
     if (text === readText.current && readAudioRef.current && !error) {
+      logger.log('useTextRead: same text, play cached audio');
       await handleReadAudio();
 
       return;
@@ -118,6 +125,8 @@ const useTextRead = (
       // save and auto play
       readAudioRef.current = resReplyAudio;
       setError('');
+
+      logger.log('useTextRead: new text, play new audio');
       await handleReadAudio();
     }
 

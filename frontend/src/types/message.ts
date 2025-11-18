@@ -6,4 +6,5 @@ export interface ChatMessage {
   grammarHasChecked?: boolean;
   grammarError?: string;
   autoRead?: boolean;
+  unlockedAudio?: HTMLAudioElement;
 }
