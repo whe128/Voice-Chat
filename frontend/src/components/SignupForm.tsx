@@ -15,9 +15,17 @@ const SignupForm: FC = () => {
     <div className="relative flex flex-col items-center py-4 pl-4 px-4 w-full h-full bg-pink-100 rounded-2xl overflow-y-auto">
       <Link
         href={query ? `/auth/sign-in?${query}` : `/auth/sign-in`}
-        className="absolute top-6 left-8 cursor-pointer text-2xl"
+        className="absolute w-20 top-8 left-6 cursor-pointer text-2xl"
       >
-        🡰
+        <Image
+          className="block select-none mx-auto "
+          src="/left.png"
+          alt="Logo"
+          width={30}
+          height={30}
+          {...{ draggable: false }}
+          priority
+        />
       </Link>
       <div className="text-center text-blue-800 text-3xl font-bold select-none">
         Sign Up

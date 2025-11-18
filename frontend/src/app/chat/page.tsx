@@ -24,11 +24,18 @@ const TestChat: FC = () => {
     >
       <div className="relative flex h-dvh w-full max-w-lg mx-auto justify-center items-center">
         <AiChat handleOpenSetting={toggleShowOption} />
-        {showOption && (
-          <div className="absolute w-full h-full top-0 right-0">
-            <Option handleOpenSetting={toggleShowOption} />
-          </div>
-        )}
+
+        <div
+          className={`absolute w-full h-full top-0 right-0
+            ${
+              showOption
+                ? 'opacity-100 pointer-events-auto'
+                : 'opacity-0 pointer-events-none'
+            }
+`}
+        >
+          <Option handleOpenSetting={toggleShowOption} />
+        </div>
       </div>
     </Suspense>
   );

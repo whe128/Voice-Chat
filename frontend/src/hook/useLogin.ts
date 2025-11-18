@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { Provider } from '@/types/user';
+import { useSearchParams } from 'next/navigation';
 
 interface HandleSubmitParams {
   username?: string;
@@ -25,6 +26,9 @@ const useLogin = (): {
   const [guestLoading, setGuestLoading] = useState(false);
   const loading = credentialLoading || googleLoading || guestLoading;
 
+  const searchParams = useSearchParams();
+  const queryString = searchParams.toString();
+
   const handleSubmit = async ({
     username = undefined,
     password = undefined,
@@ -48,10 +52,10 @@ const useLogin = (): {
       }
 
       const result = await signIn(provider, {
-        redirect: false, // we want to redirect on success
+        redirect: provider !== 'credentials', // we want to redirect on success for OAuth providers
         email: provider === 'credentials' ? username : undefined,
         password: provider === 'credentials' ? password : undefined,
-        callbackUrl: '/chat',
+        callbackUrl: queryString ? `/chat?${queryString}` : '/chat',
       });
 
       if (result?.error) {
