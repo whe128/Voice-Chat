@@ -37,7 +37,20 @@ const useChatHistory = (
     queryFn: async () => {
       // do not fetch for guest user
       if (userEmail && userEmail === 'guest') {
-        return [] as ChatMessage[];
+        const now = Date.now();
+
+        return [
+          {
+            id: now.toString(),
+            text: 'I want to learn English.',
+            isSendOut: true,
+          },
+          {
+            id: (now + 1).toString(),
+            text: "That's a wonderful goal! I can help you with various aspects of English learning.",
+            isSendOut: false,
+          },
+        ] as ChatMessage[];
       }
 
       const ws = getWebSocket ? await getWebSocket() : null;
