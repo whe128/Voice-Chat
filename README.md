@@ -1,6 +1,8 @@
 # Voice-Chat
 
-A real-time voice and text chat platform built with .NET and WebSocket technology, featuring AI-powered conversation, speech-to-text, text-to-speech, and multi-language support.
+A real-time voice and text chat platform built with .NET and WebSocket technology, featuring AI-powered conversation, speech-to-text, text-to-speech, and multi-language support.<p>
+[![System Architecture Overview](https://img.youtube.com/vi/SgxvI-twpTI/0.jpg)](https://youtu.be/SgxvI-twpTI?si=bWfmP5LWH9Fb1sEA)
+## 🏗️ Architecture
 
 ## 🎯 Overview
 
