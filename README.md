@@ -4,7 +4,7 @@ A real-time voice and text chat platform built with .NET and WebSocket technolog
 <div align="center">
   <img width="277" height="443" alt="image" src="https://github.com/user-attachments/assets/ec0a2a44-6a8a-4d48-a978-72cf25efea6b" />
 
-  <a href="https://www.youtube.com/watch?si=bWfmP5LWH9Fb1sEA">[video]</a>
+  <a href="https://www.youtube.com/watch?si=bWfmP5LWH9Fb1sEA">[Demo Video]</a>
 </div>
 
 ## 🏗️ Architecture
